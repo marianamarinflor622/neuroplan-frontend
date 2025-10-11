@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
+import { authService } from '../services/neuroplanApi';
 
 interface User {
   id: string;
@@ -37,15 +38,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Aquí verificarías si hay un token válido en localStorage/sessionStorage
+        // Verificar si hay un token válido en localStorage
         const savedUser = localStorage.getItem('neuroplan_user');
-        if (savedUser) {
+        const authToken = localStorage.getItem('authToken');
+        
+        if (savedUser && authToken) {
           const userData = JSON.parse(savedUser);
           setUser(userData);
         }
       } catch (error) {
         console.error('Error checking auth:', error);
         localStorage.removeItem('neuroplan_user');
+        localStorage.removeItem('authToken');
       } finally {
         setIsLoading(false);
       }
@@ -58,16 +62,30 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     
     try {
-      // Aquí harías la llamada real a tu API de autenticación
-      // Por ahora simulamos una respuesta exitosa
+      // Intentar login con el backend (si está disponible)
+      try {
+        const response = await authService.login(email, password);
+        
+        // Si el backend responde correctamente
+        if (response.data.token && response.data.user) {
+          localStorage.setItem('authToken', response.data.token);
+          setUser(response.data.user);
+          localStorage.setItem('neuroplan_user', JSON.stringify(response.data.user));
+          return true;
+        }
+      } catch (backendError) {
+        console.warn('Backend auth not available, using mock login:', backendError);
+      }
+      
+      // Fallback: Simulamos login para demo (cuando backend no esté disponible)
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Simular datos de usuario (en producción vendrían del backend)
+      // Simular datos de usuario para demo
       const userData: User = {
         id: '1',
         email,
         nombre: 'Usuario',
-        apellidos: 'NeuroPlan',
+        apellidos: 'Demo',
         perfilNeuroAcademico: {
           nivelActual: 'Bachillerato',
           objetivosAcademicos: 'Acceder a la universidad',
@@ -79,6 +97,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       
       setUser(userData);
       localStorage.setItem('neuroplan_user', JSON.stringify(userData));
+      localStorage.setItem('authToken', 'demo_token_' + Date.now());
       
       return true;
     } catch (error) {
@@ -90,6 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = () => {
+    authService.logout();
     setUser(null);
     localStorage.removeItem('neuroplan_user');
   };
@@ -102,14 +122,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const value: AuthContextType = {
+  const value: AuthContextType = useMemo(() => ({
     user,
     isAuthenticated: !!user,
     isLoading,
     login,
     logout,
     updateUser,
-  };
+  }), [user, isLoading]);
 
   return (
     <AuthContext.Provider value={value}>

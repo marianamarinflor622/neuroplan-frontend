@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -12,14 +12,12 @@ import {
   Cpu, 
   FileText, 
   Target, 
-  Users, 
   BookOpen,
   Zap,
   Shield,
   TrendingUp,
   ArrowRight,
   CheckCircle2,
-  Clock,
   Star,
   Lightbulb,
   BarChart3,
@@ -29,16 +27,156 @@ import {
   Share2,
   Play,
   Pause,
-  RotateCcw
+  RotateCcw,
+  Upload,
+  AlertCircle
 } from "lucide-react";
+import { studentsService, peisService, healthService } from "../services/neuroplanApi";
+import type { Student, PEI, Report, CreateStudentDTO, GeneratePEIDTO } from "../types/api";
+import { toast } from "sonner";
+import { useAuth } from "../contexts/AuthContext";
 
 const PEIEngine = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("overview");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
+  const [backendConnected, setBackendConnected] = useState(false);
+  const [students, setStudents] = useState<Student[]>([]);
+  const [peis, setPEIs] = useState<PEI[]>([]);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [studentName, setStudentName] = useState("");
+  const [isCreatingStudent, setIsCreatingStudent] = useState(false);
+  const [isGeneratingPEI, setIsGeneratingPEI] = useState(false);
 
-  // Simular análisis del PEI Engine
-  const startAnalysis = () => {
+  // Verificar conexión con el backend al cargar la página
+  useEffect(() => {
+    checkBackendConnection();
+    loadStudents();
+    loadPEIs();
+  }, []);
+
+  const checkBackendConnection = async () => {
+    try {
+      await healthService.check();
+      setBackendConnected(true);
+      toast.success("Conectado al backend NeuroPlan");
+    } catch (error) {
+      console.warn("Backend no disponible, usando modo demo:", error);
+      setBackendConnected(false);
+      toast.info("Ejecutando en modo demo");
+    }
+  };
+
+  const loadStudents = async () => {
+    if (!backendConnected) return;
+    
+    try {
+      const response = await studentsService.getAll();
+      setStudents(response.data || []);
+    } catch (error) {
+      console.error("Error loading students:", error);
+    }
+  };
+
+  const loadPEIs = async () => {
+    if (!backendConnected) return;
+    
+    try {
+      const response = await peisService.getAll();
+      setPEIs(response.data || []);
+    } catch (error) {
+      console.error("Error loading PEIs:", error);
+    }
+  };
+
+  const createStudentAndUploadReport = async () => {
+    if (!selectedFile || !studentName.trim()) {
+      toast.error("Por favor selecciona un archivo y nombre del estudiante");
+      return;
+    }
+
+    setIsCreatingStudent(true);
+    try {
+      // Crear estudiante
+      const studentData: CreateStudentDTO = {
+        name: studentName,
+        dateOfBirth: "2010-01-01", // Por ahora fecha por defecto
+        gradeLevel: "Primaria",
+        diagnosis: "TDAH + Dislexia"
+      };
+
+      const studentResponse = await studentsService.create(studentData);
+      const newStudent = studentResponse.data;
+
+      // Subir reporte médico
+      const reportResponse = await studentsService.uploadReport(newStudent.id, selectedFile);
+      
+      toast.success("Estudiante creado y reporte subido exitosamente");
+      
+      // Recargar datos
+      await loadStudents();
+      
+      // Limpiar formulario
+      setSelectedFile(null);
+      setStudentName("");
+      
+      return { student: newStudent, report: reportResponse.data };
+    } catch (error) {
+      console.error("Error creating student:", error);
+      toast.error("Error al crear estudiante y subir reporte");
+      return null;
+    } finally {
+      setIsCreatingStudent(false);
+    }
+  };
+
+  const generatePEI = async (reportId: number) => {
+    setIsGeneratingPEI(true);
+    setIsAnalyzing(true);
+    setAnalysisProgress(0);
+
+    try {
+      // Simular progreso
+      const progressInterval = setInterval(() => {
+        setAnalysisProgress(prev => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 500);
+
+      // Generar PEI real
+      const generateData: GeneratePEIDTO = { reportId };
+      const response = await peisService.generate(generateData);
+      
+      clearInterval(progressInterval);
+      setAnalysisProgress(100);
+      
+      toast.success("PEI generado exitosamente");
+      
+      // Recargar PEIs
+      await loadPEIs();
+      
+      setTimeout(() => {
+        setIsAnalyzing(false);
+        setAnalysisProgress(0);
+      }, 2000);
+      
+    } catch (error) {
+      console.error("Error generating PEI:", error);
+      toast.error("Error al generar PEI");
+      setIsAnalyzing(false);
+      setAnalysisProgress(0);
+    } finally {
+      setIsGeneratingPEI(false);
+    }
+  };
+
+  // Función demo para simular análisis
+  const startDemoAnalysis = () => {
     setIsAnalyzing(true);
     setAnalysisProgress(0);
     
@@ -52,6 +190,27 @@ const PEIEngine = () => {
         return prev + 10;
       });
     }, 200);
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      toast.info(`Archivo seleccionado: ${file.name}`);
+    }
+  };
+
+  const handleCreateAndGenerate = async () => {
+    if (!backendConnected) {
+      startDemoAnalysis();
+      toast.info("Ejecutando análisis demo");
+      return;
+    }
+
+    const result = await createStudentAndUploadReport();
+    if (result) {
+      await generatePEI(result.report.id);
+    }
   };
 
   // Datos simulados del análisis
@@ -126,7 +285,7 @@ const PEIEngine = () => {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
-              onClick={startAnalysis}
+              onClick={startDemoAnalysis}
               disabled={isAnalyzing}
               size="lg" 
               className="group bg-gradient-hero"
@@ -139,7 +298,7 @@ const PEIEngine = () => {
               ) : (
                 <>
                   <Cpu className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
-                  Analizar mi Perfil
+                  Análisis Demo
                 </>
               )}
             </Button>
@@ -151,6 +310,172 @@ const PEIEngine = () => {
             </Link>
           </div>
         </div>
+
+        {/* Estado de conexión del backend */}
+        <Card className={`mb-8 ${backendConnected ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'}`}>
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              {backendConnected ? (
+                <>
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  <span className="text-green-800 font-medium">Backend NeuroPlan conectado</span>
+                  <Badge variant="outline" className="text-green-700 border-green-300">
+                    Tiempo real
+                  </Badge>
+                </>
+              ) : (
+                <>
+                  <AlertCircle className="h-5 w-5 text-yellow-600" />
+                  <span className="text-yellow-800 font-medium">Ejecutando en modo demo</span>
+                  <Badge variant="outline" className="text-yellow-700 border-yellow-300">
+                    Simulación
+                  </Badge>
+                </>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Sección de backend real */}
+        {backendConnected && (
+          <Card className="mb-8">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Brain className="h-5 w-5 text-primary" />
+                Generador de PEI Conectado
+              </CardTitle>
+              <CardDescription>
+                Sube un reporte médico y genera un PEI personalizado usando el backend real
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Nombre del Estudiante</label>
+                    <input
+                      type="text"
+                      value={studentName}
+                      onChange={(e) => setStudentName(e.target.value)}
+                      placeholder="Ej: María González"
+                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary/20"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Reporte Médico (PDF)</label>
+                    <input
+                      type="file"
+                      accept=".pdf,.doc,.docx,.jpg,.png"
+                      onChange={handleFileChange}
+                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary/20"
+                    />
+                    {selectedFile && (
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Archivo: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="font-semibold">Proceso de Generación:</h4>
+                  <ol className="space-y-2 text-sm">
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center mt-0.5">1</span>
+                      <span>Crear perfil del estudiante</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center mt-0.5">2</span>
+                      <span>Subir y procesar reporte médico</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center mt-0.5">3</span>
+                      <span>Generar PEI con Claude AI</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary text-white text-xs flex items-center justify-center mt-0.5">4</span>
+                      <span>Disponible para descarga y audio</span>
+                    </li>
+                  </ol>
+                  <Button 
+                    onClick={handleCreateAndGenerate}
+                    disabled={isCreatingStudent || isGeneratingPEI || !studentName.trim() || !selectedFile}
+                    className="w-full"
+                  >
+                    {isCreatingStudent || isGeneratingPEI ? (
+                      <>
+                        <RotateCcw className="h-4 w-4 mr-2 animate-spin" />
+                        {isCreatingStudent ? "Creando estudiante..." : "Generando PEI..."}
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Crear Estudiante y Generar PEI
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Lista de estudiantes */}
+              {students.length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="font-semibold">Estudiantes Registrados ({students.length})</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {students.slice(0, 6).map((student) => (
+                      <Card key={student.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <h5 className="font-medium">{student.name}</h5>
+                          <p className="text-sm text-muted-foreground">{student.gradeLevel}</p>
+                          {student.diagnosis && (
+                            <Badge variant="outline" className="mt-2 text-xs">
+                              {student.diagnosis}
+                            </Badge>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Lista de PEIs generados */}
+              {peis.length > 0 && (
+                <div className="space-y-4">
+                  <h4 className="font-semibold">PEIs Generados ({peis.length})</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {peis.slice(0, 4).map((pei) => (
+                      <Card key={pei.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h5 className="font-medium">PEI #{pei.id}</h5>
+                              <p className="text-sm text-muted-foreground">
+                                Generado: {new Date(pei.generatedAt).toLocaleDateString()}
+                              </p>
+                              <Badge 
+                                variant={pei.status === 'approved' ? 'default' : 'secondary'}
+                                className="mt-2"
+                              >
+                                {pei.status}
+                              </Badge>
+                            </div>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => window.open(`${import.meta.env.VITE_API_BASE_URL}/peis/${pei.id}/pdf`, '_blank')}
+                            >
+                              <Download className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Progreso del análisis */}
         {isAnalyzing && (
