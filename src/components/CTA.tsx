@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const benefits = [
-  "Itinerario educativo 100% personalizado",
-  "Alineado con normativa española (LOMLOE, CRUE)",
-  "Recursos y materiales adaptados",
-  "Seguimiento y ajustes automáticos",
+  "Titulación oficial homologada garantizada",
+  "Currículo LOMLOE, FP, CRUE-MECES adaptado",
+  "Pasaporte Educativo Inteligente (PEI)",
+  "Validación curricular estricta con IA",
 ];
 
 export const CTA = () => {
@@ -18,11 +19,11 @@ export const CTA = () => {
         <div className="max-w-4xl mx-auto">
           <div className="rounded-3xl bg-gradient-hero p-12 lg:p-16 shadow-glow text-center space-y-8 animate-in fade-in zoom-in duration-1000">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white">
-              Comienza tu viaje educativo hoy
+              Obtén tu titulación oficial homologada
             </h2>
             
             <p className="text-lg text-white/90 max-w-2xl mx-auto">
-              Únete a cientos de estudiantes que ya están transformando su educación con planes personalizados
+              Transforma tus características neurocognitivas en el motor de tu éxito académico con NeuroPlan AI Campus
             </p>
 
             {/* Beneficios */}
@@ -40,26 +41,21 @@ export const CTA = () => {
 
             {/* Botones */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button
-                variant="secondary"
-                size="xl"
-                className="group bg-white text-primary hover:bg-white/90 shadow-elegant"
-              >
-                Crear mi perfil gratis
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button
-                variant="outline"
-                size="xl"
-                className="border-2 border-white text-white hover:bg-white/10"
-              >
-                Agendar demo
-              </Button>
+              <Link to="/registro">
+                <Button
+                  variant="secondary"
+                  size="xl"
+                  className="group bg-white text-primary hover:bg-white/90 shadow-elegant"
+                >
+                  Crear mi Perfil NeuroAcadémico
+                  <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </Link>
             </div>
 
             {/* Nota */}
             <p className="text-sm text-white/80 pt-4">
-              Sin tarjeta de crédito requerida · Comienza en menos de 5 minutos
+              Titulación oficial garantizada · Validación curricular LOMLOE compliant
             </p>
           </div>
         </div>

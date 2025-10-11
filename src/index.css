@@ -1,5 +1,8 @@
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind base;
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind components;
+/* stylelint-disable-next-line at-rule-no-unknown */
 @tailwind utilities;
 
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
@@ -78,6 +81,12 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 222 47% 11%;
     --sidebar-border: 214 32% 91%;
     --sidebar-ring: 222 70% 48%;
+
+    /* Accesibilidad */
+    --accessibility-bg: 0 0% 98%;
+    --accessibility-panel: 0 0% 100%;
+    --accessibility-hover: 250 70% 95%;
+    --accessibility-active: 250 70% 60%;
   }
 
   .dark {
@@ -132,6 +141,12 @@ All colors MUST be HSL.
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217 33% 17%;
     --sidebar-ring: 222 70% 58%;
+
+    /* Accesibilidad - Dark Mode */
+    --accessibility-bg: 222.2 84% 6%;
+    --accessibility-panel: 222.2 84% 8%;
+    --accessibility-hover: 250 70% 20%;
+    --accessibility-active: 250 70% 60%;
   }
 }
 

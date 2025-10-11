@@ -1,30 +1,30 @@
 import { Card } from "@/components/ui/card";
-import { FileText, Brain, Route, TrendingUp } from "lucide-react";
+import { FileText, Brain, BookOpen, Award } from "lucide-react";
 
 const steps = [
   {
     number: "01",
     icon: FileText,
-    title: "Completa tu perfil",
-    description: "Proporciona información sobre diagnóstico, intereses académicos, estilo de aprendizaje y objetivos educativos.",
+    title: "Perfil NeuroAcadémico AI",
+    description: "OCR/NLP extrae diagnósticos clínicos y Test Adaptativo IA mapea fortalezas cognitivas, intereses y preferencias sensoriales.",
   },
   {
     number: "02",
     icon: Brain,
-    title: "Análisis neuroacadémico",
-    description: "Nuestra IA analiza tus datos para crear un perfil personalizado con fortalezas, áreas de apoyo y recomendaciones.",
+    title: "Motor de Individualización",
+    description: "El PEI Engine crea tu fuente de verdad académica, recomendando el itinerario más eficaz y homologable (ESO, FP, Universidad).",
   },
   {
     number: "03",
-    icon: Route,
-    title: "Itinerario personalizado",
-    description: "Recibe un plan educativo completo desde tu nivel actual hasta tus metas universitarias o profesionales.",
+    icon: BookOpen,
+    title: "Contenido Adaptativo",
+    description: "Learning Engine fragmenta el currículo oficial y lo convierte a multimedia con interfaz dinámica y Tutor Virtual sin alucinaciones.",
   },
   {
     number: "04",
-    icon: TrendingUp,
-    title: "Seguimiento y adaptación",
-    description: "El sistema evoluciona contigo, ajustando el itinerario según tu progreso y nuevas necesidades.",
+    icon: Award,
+    title: "Pasaporte Educativo",
+    description: "Compliance Engine genera automáticamente tu PEI digital verificable para solicitar la titulación oficial homologada.",
   },
 ];
 
@@ -40,7 +40,7 @@ export const HowItWorks = () => {
             </span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Cuatro pasos simples para comenzar tu viaje educativo personalizado
+            De tu perfil neurocognitivo a tu titulación oficial homologada en 4 pasos
           </p>
         </div>
 

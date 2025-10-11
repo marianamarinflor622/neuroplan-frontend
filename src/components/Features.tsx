@@ -1,42 +1,42 @@
 import { Card } from "@/components/ui/card";
-import { Brain, BookOpen, Target, Users, LineChart, Sparkles } from "lucide-react";
+import { Brain, BookOpen, Shield, Cpu, FileText, Award } from "lucide-react";
 import learningPathIcon from "@/assets/learning-path-icon.png";
 
 const features = [
   {
     icon: Brain,
-    title: "Perfil Neuroacadémico",
-    description: "Análisis personalizado de fortalezas cognitivas, estilo de aprendizaje y necesidades específicas.",
+    title: "PEI Engine - Motor de Individualización",
+    description: "Perfil NeuroAcadémico AI que extrae diagnósticos clínicos con OCR/NLP y mapea fortalezas cognitivas para crear el itinerario académico más eficaz y homologable.",
     gradient: "from-primary to-primary-dark",
   },
   {
-    icon: Target,
-    title: "Itinerario Personalizado",
-    description: "Planes educativos completos desde ESO hasta Universidad, adaptados a tu ritmo y objetivos.",
+    icon: BookOpen,
+    title: "Learning Engine - Motor de Contenido Adaptativo",
+    description: "Currículo oficial español (LOMLOE, FP, CRUE-MECES) fragmentado y convertido a multimedia. Interfaz dinámica con Modo Pictográfico y Tutor Virtual sin alucinaciones.",
     gradient: "from-secondary to-success",
   },
   {
-    icon: BookOpen,
-    title: "Recursos Adaptados",
-    description: "Materiales educativos diseñados específicamente para diferentes estilos de aprendizaje.",
+    icon: Shield,
+    title: "Compliance Engine - Motor de Cumplimiento Curricular",
+    description: "Trazabilidad completa del progreso académico. Generación automática del Pasaporte Educativo Inteligente (PEI) para solicitar titulación oficial homologada.",
     gradient: "from-accent to-destructive",
   },
   {
-    icon: LineChart,
-    title: "Seguimiento Continuo",
-    description: "Monitoreo del progreso con ajustes dinámicos del itinerario según tu evolución.",
+    icon: Cpu,
+    title: "Adaptación Automatizada",
+    description: "Transformación del temario a formatos multimedia (Veed.io, ElevenLabs) con evaluación adaptada por voz o proyectos, manteniendo equivalencia curricular.",
     gradient: "from-primary-light to-secondary",
   },
   {
-    icon: Users,
-    title: "Apoyo Colaborativo",
-    description: "Coordinación entre estudiantes, familias y docentes para un acompañamiento integral.",
+    icon: FileText,
+    title: "Pasaporte Educativo Inteligente",
+    description: "Documento digital verificable que registra adaptaciones y créditos cumplidos. Prueba oficial para solicitar expedición de título homologado ante autoridades educativas.",
     gradient: "from-secondary to-accent",
   },
   {
-    icon: Sparkles,
-    title: "IA Educativa",
-    description: "Asistente inteligente disponible 24/7 para responder dudas y sugerir actividades.",
+    icon: Award,
+    title: "Titulación Oficial Garantizada",
+    description: "Validación curricular estricta que asegura competencias equivalentes al currículo oficial. Reconocimiento legal completo para estudiantes neurodivergentes.",
     gradient: "from-accent to-primary",
   },
 ];
@@ -47,13 +47,14 @@ export const Features = () => {
       <div className="container">
         <div className="text-center space-y-4 mb-16 animate-in fade-in slide-in-from-bottom duration-1000">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold">
-            Todo lo que necesitas para{" "}
+            Los 3 motores que{" "}
             <span className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              brillar
-            </span>
+              transforman
+            </span>{" "}
+            tu educación
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Herramientas diseñadas con pedagogía inclusiva y tecnología de vanguardia
+            Hiper-personalización académica con validación curricular estricta para garantizar tu titulación oficial
           </p>
         </div>
 

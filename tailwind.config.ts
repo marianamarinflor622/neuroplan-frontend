@@ -63,6 +63,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        accessibility: {
+          bg: "hsl(var(--accessibility-bg))",
+          panel: "hsl(var(--accessibility-panel))",
+          hover: "hsl(var(--accessibility-hover))",
+          active: "hsl(var(--accessibility-active))",
+        },
       },
       backgroundImage: {
         'gradient-hero': 'var(--gradient-hero)',
