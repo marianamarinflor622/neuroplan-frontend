@@ -18,36 +18,38 @@ import {
   TrendingUp,
   ArrowRight,
   CheckCircle2,
-  Star,
   Lightbulb,
   BarChart3,
   Settings,
   Eye,
   Download,
-  Share2,
   Play,
-  Pause,
   RotateCcw,
   Upload,
   AlertCircle
 } from "lucide-react";
 import { studentsService, peisService, healthService } from "../services/neuroplanApi";
-import type { Student, PEI, Report, CreateStudentDTO, GeneratePEIDTO } from "../types/api";
+import type { Student, PEI, CreateStudentDTO, GeneratePEIDTO } from "../types/api";
 import { toast } from "sonner";
 import { useAuth } from "../contexts/AuthContext";
+import { BedrockDemo } from "@/components/BedrockDemo";
+import WorkflowDemo from "@/components/WorkflowDemo";
 
 const PEIEngine = () => {
-  const { user } = useAuth();
+  const { user } = useAuth(); // Hook para mantener contexto de autenticación
   const [activeTab, setActiveTab] = useState("overview");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
   const [backendConnected, setBackendConnected] = useState(false);
   const [students, setStudents] = useState<Student[]>([]);
-  const [peis, setPEIs] = useState<PEI[]>([]);
+  const [peis, setPeis] = useState<PEI[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [studentName, setStudentName] = useState("");
   const [isCreatingStudent, setIsCreatingStudent] = useState(false);
   const [isGeneratingPEI, setIsGeneratingPEI] = useState(false);
+  
+  // Evitar warning de variable no usada
+  console.debug('User context:', user);
 
   // Verificar conexión con el backend al cargar la página
   useEffect(() => {
@@ -84,7 +86,7 @@ const PEIEngine = () => {
     
     try {
       const response = await peisService.getAll();
-      setPEIs(response.data || []);
+      setPeis(response.data || []);
     } catch (error) {
       console.error("Error loading PEIs:", error);
     }
@@ -150,7 +152,7 @@ const PEIEngine = () => {
 
       // Generar PEI real
       const generateData: GeneratePEIDTO = { reportId };
-      const response = await peisService.generate(generateData);
+      await peisService.generate(generateData);
       
       clearInterval(progressInterval);
       setAnalysisProgress(100);
@@ -352,8 +354,9 @@ const PEIEngine = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-2">Nombre del Estudiante</label>
+                    <label htmlFor="studentName" className="block text-sm font-medium mb-2">Nombre del Estudiante</label>
                     <input
+                      id="studentName"
                       type="text"
                       value={studentName}
                       onChange={(e) => setStudentName(e.target.value)}
@@ -362,8 +365,9 @@ const PEIEngine = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium mb-2">Reporte Médico (PDF)</label>
+                    <label htmlFor="reportFile" className="block text-sm font-medium mb-2">Reporte Médico (PDF)</label>
                     <input
+                      id="reportFile"
                       type="file"
                       accept=".pdf,.doc,.docx,.jpg,.png"
                       onChange={handleFileChange}
@@ -685,7 +689,7 @@ const PEIEngine = () => {
               </CardHeader>
               <CardContent className="space-y-6">
                 {analysisResults.perfilNeurocognitivo.fortalezas.map((fortaleza, index) => (
-                  <div key={index} className="space-y-2">
+                  <div key={`${fortaleza.nombre}-${index}`} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <h4 className="font-medium">{fortaleza.nombre}</h4>
                       <span className="text-sm text-muted-foreground">{fortaleza.porcentaje}%</span>
@@ -709,23 +713,30 @@ const PEIEngine = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {analysisResults.perfilNeurocognitivo.areasApoyo.map((area, index) => (
-                  <div key={index} className="flex items-start gap-3 p-4 rounded-lg bg-muted/50">
-                    <div className={`w-3 h-3 rounded-full mt-2 ${
-                      area.nivel === 'Alto' ? 'bg-red-500' : 
-                      area.nivel === 'Medio' ? 'bg-yellow-500' : 'bg-green-500'
-                    }`} />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        <h4 className="font-medium">{area.nombre}</h4>
-                        <Badge variant={area.nivel === 'Alto' ? 'destructive' : area.nivel === 'Medio' ? 'secondary' : 'default'}>
-                          {area.nivel}
-                        </Badge>
+                {analysisResults.perfilNeurocognitivo.areasApoyo.map((area, index) => {
+                  let bgColorClass = 'bg-green-500';
+                  if (area.nivel === 'Alto') bgColorClass = 'bg-red-500';
+                  else if (area.nivel === 'Medio') bgColorClass = 'bg-yellow-500';
+                  
+                  let badgeVariant: any = 'default';
+                  if (area.nivel === 'Alto') badgeVariant = 'destructive';
+                  else if (area.nivel === 'Medio') badgeVariant = 'secondary';
+                  
+                  return (
+                    <div key={`area-${area.nombre}-${index}`} className="flex items-start gap-3 p-4 rounded-lg bg-muted/50">
+                      <div className={`w-3 h-3 rounded-full mt-2 ${bgColorClass}`} />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h4 className="font-medium">{area.nombre}</h4>
+                          <Badge variant={badgeVariant}>
+                            {area.nivel}
+                          </Badge>
+                        </div>
+                        <p className="text-sm text-muted-foreground">{area.descripcion}</p>
                       </div>
-                      <p className="text-sm text-muted-foreground">{area.descripcion}</p>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </CardContent>
             </Card>
 
@@ -743,7 +754,7 @@ const PEIEngine = () => {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {analysisResults.perfilNeurocognitivo.preferenciasAprendizaje.map((preferencia, index) => (
-                    <div key={index} className="space-y-3">
+                    <div key={`${preferencia.tipo}-${index}`} className="space-y-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                           <preferencia.icono className="h-5 w-5 text-primary" />
@@ -765,7 +776,7 @@ const PEIEngine = () => {
           <TabsContent value="recommendations" className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {analysisResults.recomendaciones.map((recomendacion, index) => (
-                <Card key={index} className="hover:shadow-glow transition-spring">
+                <Card key={`${recomendacion.titulo}-${index}`} className="hover:shadow-glow transition-spring">
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div>
@@ -1011,6 +1022,22 @@ const PEIEngine = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* AWS Bedrock Demo Integration */}
+        <div className="mt-12">
+          <BedrockDemo showTitle={true} />
+        </div>
+
+        {/* n8n Workflow Demo Integration */}
+        <div className="mt-12">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold mb-2">Automatización de Workflows</h2>
+            <p className="text-lg text-muted-foreground">
+              Prueba la integración con n8n para automatizar notificaciones y procesos
+            </p>
+          </div>
+          <WorkflowDemo />
+        </div>
 
         {/* CTA Final */}
         <Card className="mt-12 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">

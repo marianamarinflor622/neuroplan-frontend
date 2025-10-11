@@ -127,9 +127,37 @@ export const workflowService = {
 
 // Health Check Service
 export const healthService = {
-  // Verificar estado del servidor
-  check: (): Promise<ApiResponse<{ status: string; timestamp: string }>> =>
-    api.get('/health').then(res => res.data),
+  // Verificar estado del servidor (endpoint sin prefijo /api)
+  check: async (): Promise<ApiResponse<{ status: string; timestamp: string }>> => {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'http://localhost:3001';
+    const response = await fetch(`${baseUrl}/health`);
+    const data = await response.json();
+    return {
+      data,
+      status: response.status,
+    };
+  },
+};
+
+// AWS Bedrock Service
+export const bedrockService = {
+  // Listar modelos disponibles
+  getModels: (): Promise<ApiResponse<any[]>> =>
+    api.get('/aws/bedrock/models').then(res => res.data),
+
+  // Simplificar contenido con Bedrock
+  simplifyContent: (data: { text: string; targetLevel?: string }): Promise<ApiResponse<any>> =>
+    api.post('/aws/bedrock/simplify-content', data).then(res => res.data),
+
+  // Generar PEI completo con Bedrock
+  generatePEI: (data: {
+    diagnosis: string[];
+    symptoms: string[];
+    strengths: string[];
+    studentName: string;
+    gradeLevel: string;
+  }): Promise<ApiResponse<any>> =>
+    api.post('/aws/bedrock/generate-pei', data).then(res => res.data),
 };
 
 // Auth Service (si se implementa más adelante)

@@ -16,6 +16,8 @@ import Dashboard from "./pages/Dashboard";
 import Itinerary from "./pages/Itinerary";
 import Resources from "./pages/Resources";
 import PEIEngine from "./pages/PEIEngine";
+import BedrockDemo from "./pages/BedrockDemo";
+import WorkflowDemo from "./pages/WorkflowDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -65,6 +67,14 @@ const App = () => {
               <Route 
                 path="/pei-engine" 
                 element={<PEIEngine />}
+              />
+              <Route 
+                path="/bedrock-demo" 
+                element={<BedrockDemo />}
+              />
+              <Route 
+                path="/workflow-demo" 
+                element={<WorkflowDemo />}
               />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
