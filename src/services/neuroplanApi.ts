@@ -19,22 +19,26 @@ import type {
 export const studentsService = {
   // Crear estudiante
   create: (data: CreateStudentDTO): Promise<ApiResponse<Student>> =>
-    api.post('/uploads/students', data).then(res => res.data),
+    api.post('/upload/students', data).then(res => res.data),
 
   // Listar estudiantes
   getAll: (): Promise<ApiResponse<Student[]>> =>
-    api.get('/uploads/students').then(res => res.data),
+    api.get('/upload/students').then(res => res.data),
 
   // Obtener estudiante por ID
   getById: (id: number): Promise<ApiResponse<Student>> =>
-    api.get(`/uploads/students/${id}`).then(res => res.data),
+    api.get(`/upload/students/${id}`).then(res => res.data),
 
   // Subir reporte médico
   uploadReport: (studentId: number, file: File): Promise<ApiResponse<Report>> => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('studentId', String(studentId)); // Enviar studentId como string en FormData
-    return api.post(`/uploads/reports`, formData, {
+    
+    // DEBUG: Verificar FormData
+    console.log('📤 Subiendo reporte con studentId:', studentId, 'tipo:', typeof String(studentId));
+    
+    return api.post(`/upload/reports`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -43,7 +47,7 @@ export const studentsService = {
 
   // Descargar reporte
   downloadReport: (reportId: number): Promise<Blob> =>
-    api.get(`/uploads/reports/${reportId}/download`, {
+    api.get(`/upload/reports/${reportId}/download`, {
       responseType: 'blob',
     }).then(res => res.data),
 };

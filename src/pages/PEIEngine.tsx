@@ -155,6 +155,14 @@ const PEIEngine = () => {
         reportId, 
         studentId: String(studentId) 
       };
+      
+      // DEBUG: Verificar datos antes de enviar
+      console.log('🔍 Generando PEI con datos:', generateData);
+      console.log('📊 Tipos:', {
+        reportId: typeof generateData.reportId,
+        studentId: typeof generateData.studentId
+      });
+      
       await peisService.generate(generateData);
       
       clearInterval(progressInterval);
