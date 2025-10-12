@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Brain, BookOpen, Shield, Cpu, FileText, Award } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import learningPathIcon from "@/assets/learning-path-icon.png";
 
 const features = [
@@ -42,6 +43,25 @@ const features = [
 ];
 
 export const Features = () => {
+  const navigate = useNavigate();
+
+  const handleCardClick = (index: number) => {
+    switch (index) {
+      case 0: // PEI Engine
+        navigate('/pei-engine');
+        break;
+      case 1: // Learning Engine
+        navigate('/recursos');
+        break;
+      case 2: // Compliance Engine
+        navigate('/itinerario');
+        break;
+      default:
+        // Otras tarjetas no tienen navegación específica
+        break;
+    }
+  };
+
   return (
     <section className="py-20 lg:py-32 bg-muted/30">
       <div className="container">
@@ -77,6 +97,7 @@ export const Features = () => {
               key={index}
               className="p-6 space-y-4 hover:shadow-glow transition-spring cursor-pointer group animate-in fade-in slide-in-from-bottom duration-700"
               style={{ animationDelay: `${index * 100}ms` }}
+              onClick={() => handleCardClick(index)}
             >
               <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${feature.gradient} shadow-elegant`}>
                 <feature.icon className="h-6 w-6 text-white" />
