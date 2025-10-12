@@ -62,7 +62,7 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed right-0 top-0 h-screen w-80 z-50 bg-accessibility-panel border-l shadow-2xl animate-in slide-in-from-right duration-300">
+    <div className="fixed top-4 right-4 w-96 bg-white border border-gray-300 rounded-lg shadow-lg z-50 max-h-[90vh] overflow-hidden">
       <div className="flex flex-col h-full">
         {/* Header */}
         <div className="flex items-center justify-between p-6 bg-primary text-primary-foreground">
