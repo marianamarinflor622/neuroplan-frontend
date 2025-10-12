@@ -17,6 +17,7 @@ import Dashboard from "./pages/Dashboard";
 import Itinerary from "./pages/Itinerary";
 import Resources from "./pages/Resources";
 import PEIEngine from "./pages/PEIEngine";
+import GeneratePEI from "./pages/GeneratePEI";
 import BedrockDemo from "./pages/BedrockDemo";
 import WorkflowDemo from "./pages/WorkflowDemo";
 import NotFound from "./pages/NotFound";
@@ -69,6 +70,10 @@ const App = () => {
                 <Route 
                   path="/pei-engine" 
                   element={<PEIEngine />}
+                />
+                <Route 
+                  path="/generate-pei" 
+                  element={<GeneratePEI />}
                 />
                 <Route 
                   path="/bedrock-demo" 
