@@ -27,7 +27,8 @@ import {
   FileText,
   Settings,
   Eye,
-  EyeOff
+  EyeOff,
+  FileCheck
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
@@ -206,7 +207,7 @@ const Profile = () => {
 
           {/* Tabs del Perfil */}
           <Tabs defaultValue="personal" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="personal" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 Personal
@@ -222,6 +223,10 @@ const Profile = () => {
               <TabsTrigger value="progreso" className="flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" />
                 Progreso
+              </TabsTrigger>
+              <TabsTrigger value="pei" className="flex items-center gap-2">
+                <FileCheck className="h-4 w-4" />
+                PEI
               </TabsTrigger>
             </TabsList>
 
@@ -553,6 +558,80 @@ const Profile = () => {
                       </div>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* Tab: PEI */}
+            <TabsContent value="pei" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileCheck className="h-5 w-5" />
+                    Pasaporte Educativo Inteligente
+                  </CardTitle>
+                  <CardDescription>
+                    Accede a tu PEI generado y gestiona tu perfil educativo
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="border-primary/20">
+                      <CardHeader>
+                        <CardTitle className="text-lg">Ver PEI Generado</CardTitle>
+                        <CardDescription>
+                          Accede a tu Pasaporte Educativo Inteligente actual
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Link to="/pei-result">
+                          <Button className="w-full bg-gradient-hero">
+                            <FileCheck className="h-4 w-4 mr-2" />
+                            Ver mi PEI
+                          </Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border-secondary/20">
+                      <CardHeader>
+                        <CardTitle className="text-lg">Generar Nuevo PEI</CardTitle>
+                        <CardDescription>
+                          Crea un nuevo PEI basado en tu perfil actual
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Link to="/generate-pei">
+                          <Button variant="outline" className="w-full">
+                            <Target className="h-4 w-4 mr-2" />
+                            Generar PEI
+                          </Button>
+                        </Link>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Información del PEI</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="text-center p-4 bg-muted/50 rounded-lg">
+                          <div className="text-2xl font-bold text-primary">1</div>
+                          <div className="text-sm text-muted-foreground">PEI Activo</div>
+                        </div>
+                        <div className="text-center p-4 bg-muted/50 rounded-lg">
+                          <div className="text-2xl font-bold text-primary">2024</div>
+                          <div className="text-sm text-muted-foreground">Año de Generación</div>
+                        </div>
+                        <div className="text-center p-4 bg-muted/50 rounded-lg">
+                          <div className="text-2xl font-bold text-primary">365</div>
+                          <div className="text-sm text-muted-foreground">Días de Validez</div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </CardContent>
               </Card>
             </TabsContent>

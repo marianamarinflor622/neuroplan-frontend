@@ -1,43 +1,14 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import { 
-  Brain, 
   Download, 
-  Share2, 
-  Eye, 
-  FileText, 
-  Target, 
-  BookOpen,
-  Zap,
-  Shield,
-  TrendingUp,
-  CheckCircle,
-  AlertTriangle,
-  Clock,
-  User,
-  GraduationCap,
-  Star,
-  ArrowLeft,
-  Print,
-  Mail,
-  Calendar,
-  MapPin,
-  Award,
-  Lightbulb,
-  BarChart3,
-  Settings
+  ArrowLeft
 } from "lucide-react";
 
 const PEIResult = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   
   // Datos del PEI (en una implementación real, estos vendrían de la API)
@@ -201,375 +172,64 @@ const PEIResult = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-white">
       <Header />
       
       <main className="container mx-auto px-4 py-12">
-        {/* Header de la página */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate(-1)}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Volver
-            </Button>
-            <div>
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                PEI Generado
-              </h1>
-              <p className="text-lg text-muted-foreground mt-2">
-                Pasaporte Educativo Inteligente - {peiData.studentName}
-              </p>
-            </div>
-          </div>
+        {/* Contenido simple y visible */}
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            PEI Generado
+          </h1>
           
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={handlePrint}>
-              <Print className="h-4 w-4 mr-2" />
-              Imprimir
-            </Button>
-            <Button variant="outline" size="sm" onClick={handleShare}>
-              <Share2 className="h-4 w-4 mr-2" />
-              Compartir
-            </Button>
+          <p className="text-lg text-gray-600 mb-8">
+            Pasaporte Educativo Inteligente - {peiData.studentName}
+          </p>
+          
+          <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+            <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+              Información del PEI
+            </h2>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 mb-2">Datos del Estudiante</h3>
+                <p className="text-gray-600">Nombre: {peiData.studentName}</p>
+                <p className="text-gray-600">Grado: {peiData.grade}</p>
+                <p className="text-gray-600">ID PEI: {peiData.id}</p>
+              </div>
+              
+              <div>
+                <h3 className="text-lg font-medium text-gray-700 mb-2">Estado del PEI</h3>
+                <p className="text-gray-600">Estado: {peiData.status === "active" ? "Activo" : "Inactivo"}</p>
+                <p className="text-gray-600">Generado: {new Date(peiData.generatedDate).toLocaleDateString()}</p>
+                <p className="text-gray-600">Válido hasta: {new Date(peiData.validUntil).toLocaleDateString()}</p>
+              </div>
+            </div>
+            
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h3 className="text-lg font-medium text-gray-700 mb-4">Acciones</h3>
+              <div className="flex gap-4">
+                <Button 
+                  onClick={() => navigate(-1)}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Volver
+                </Button>
+                
+                <Button 
+                  onClick={handleDownload}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="h-4 w-4" />
+                  Descargar PEI
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
-
-        {/* Información general del PEI */}
-        <Card className="mb-8 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-2xl flex items-center gap-2">
-                  <Brain className="h-6 w-6 text-primary" />
-                  PEI #{peiData.id}
-                </CardTitle>
-                <CardDescription className="text-base mt-2">
-                  Pasaporte Educativo Inteligente generado automáticamente
-                </CardDescription>
-              </div>
-              <Badge className={getStatusColor(peiData.status)}>
-                {peiData.status === "active" ? "Activo" : "Inactivo"}
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="flex items-center gap-3">
-                <User className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Estudiante</p>
-                  <p className="font-medium">{peiData.studentName}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <GraduationCap className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Grado</p>
-                  <p className="font-medium">{peiData.grade}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Calendar className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Generado</p>
-                  <p className="font-medium">{new Date(peiData.generatedDate).toLocaleDateString()}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Válido hasta</p>
-                  <p className="font-medium">{new Date(peiData.validUntil).toLocaleDateString()}</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Tabs con información detallada */}
-        <Tabs defaultValue="profile" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="profile">Perfil</TabsTrigger>
-            <TabsTrigger value="itinerary">Itinerario</TabsTrigger>
-            <TabsTrigger value="adaptations">Adaptaciones</TabsTrigger>
-            <TabsTrigger value="goals">Metas</TabsTrigger>
-            <TabsTrigger value="documents">Documentos</TabsTrigger>
-          </TabsList>
-
-          {/* Tab: Perfil Neurocognitivo */}
-          <TabsContent value="profile" className="space-y-6">
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Brain className="h-5 w-5 text-primary" />
-                  Perfil Neurocognitivo
-                </CardTitle>
-                <CardDescription>
-                  Análisis completo de fortalezas y áreas de mejora
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Fortalezas */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <TrendingUp className="h-5 w-5 text-green-600" />
-                    Fortalezas Identificadas
-                  </h3>
-                  <div className="grid gap-4">
-                    {peiData.neurocognitiveProfile.strengths.map((strength, index) => (
-                      <div key={index} className="p-4 bg-green-50 rounded-lg border border-green-200">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-green-800">{strength.area}</h4>
-                          <span className={`font-bold ${getScoreColor(strength.score)}`}>
-                            {strength.score}%
-                          </span>
-                        </div>
-                        <p className="text-sm text-green-700">{strength.description}</p>
-                        <Progress value={strength.score} className="mt-2 h-2" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Áreas de mejora */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <AlertTriangle className="h-5 w-5 text-yellow-600" />
-                    Áreas de Mejora
-                  </h3>
-                  <div className="grid gap-4">
-                    {peiData.neurocognitiveProfile.challenges.map((challenge, index) => (
-                      <div key={index} className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-yellow-800">{challenge.area}</h4>
-                          <span className={`font-bold ${getScoreColor(challenge.score)}`}>
-                            {challenge.score}%
-                          </span>
-                        </div>
-                        <p className="text-sm text-yellow-700">{challenge.description}</p>
-                        <Progress value={challenge.score} className="mt-2 h-2" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Recomendaciones */}
-                <div>
-                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5 text-blue-600" />
-                    Recomendaciones
-                  </h3>
-                  <div className="grid gap-2">
-                    {peiData.neurocognitiveProfile.recommendations.map((rec, index) => (
-                      <div key={index} className="flex items-start gap-2 p-3 bg-blue-50 rounded-lg">
-                        <CheckCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-blue-800">{rec}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Tab: Itinerario Personalizado */}
-          <TabsContent value="itinerary" className="space-y-6">
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-primary" />
-                  Itinerario Personalizado
-                </CardTitle>
-                <CardDescription>
-                  Plan de estudios adaptado a las necesidades específicas
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">Progreso General</span>
-                    <span className="text-sm font-bold text-primary">{peiData.personalizedItinerary.totalProgress}%</span>
-                  </div>
-                  <Progress value={peiData.personalizedItinerary.totalProgress} className="h-3" />
-                </div>
-
-                <div className="grid gap-4">
-                  {peiData.personalizedItinerary.subjects.map((subject, index) => (
-                    <div key={index} className="p-4 border rounded-lg hover:shadow-md transition-shadow">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="text-lg font-semibold">{subject.name}</h3>
-                        <Badge variant={subject.level === "Adaptado" ? "default" : "secondary"}>
-                          {subject.level}
-                        </Badge>
-                      </div>
-                      
-                      <div className="mb-3">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm text-muted-foreground">Progreso</span>
-                          <span className="text-sm font-medium">{subject.progress}%</span>
-                        </div>
-                        <Progress value={subject.progress} className="h-2" />
-                      </div>
-
-                      <div>
-                        <h4 className="text-sm font-medium mb-2">Adaptaciones:</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {subject.adaptations.map((adaptation, idx) => (
-                            <Badge key={idx} variant="outline" className="text-xs">
-                              {adaptation}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Tab: Adaptaciones Curriculares */}
-          <TabsContent value="adaptations" className="space-y-6">
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Settings className="h-5 w-5 text-primary" />
-                  Adaptaciones Curriculares
-                </CardTitle>
-                <CardDescription>
-                  Modificaciones y apoyos para el aprendizaje
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Adaptaciones Generales</h3>
-                  <div className="grid gap-3">
-                    {peiData.curricularAdaptations.general.map((adaptation, index) => (
-                      <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                        <Shield className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                        <p className="text-sm">{adaptation}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <Separator />
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-4">Adaptaciones Específicas por Materia</h3>
-                  <div className="grid gap-3">
-                    {peiData.curricularAdaptations.specific.map((adaptation, index) => (
-                      <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg">
-                        <Target className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-blue-800">{adaptation}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Tab: Metas y Objetivos */}
-          <TabsContent value="goals" className="space-y-6">
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-primary" />
-                  Metas y Objetivos
-                </CardTitle>
-                <CardDescription>
-                  Objetivos específicos y seguimiento del progreso
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  {peiData.goals.map((goal) => (
-                    <div key={goal.id} className="p-4 border rounded-lg">
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold mb-1">{goal.title}</h3>
-                          <p className="text-sm text-muted-foreground mb-2">{goal.description}</p>
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                            <span className="flex items-center gap-1">
-                              <Calendar className="h-3 w-3" />
-                              Meta: {goal.target}
-                            </span>
-                            <Badge variant={goal.status === "completed" ? "default" : "secondary"}>
-                              {goal.status === "completed" ? "Completado" : "En Progreso"}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="mb-2">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-sm font-medium">Progreso</span>
-                          <span className="text-sm font-bold text-primary">{goal.progress}%</span>
-                        </div>
-                        <Progress value={goal.progress} className="h-2" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Tab: Documentos */}
-          <TabsContent value="documents" className="space-y-6">
-            <Card className="bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <FileText className="h-5 w-5 text-primary" />
-                  Documentos del PEI
-                </CardTitle>
-                <CardDescription>
-                  Descarga todos los documentos relacionados con tu PEI
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4">
-                  {peiData.documents.map((doc, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg hover:shadow-md transition-shadow">
-                      <div className="flex items-center gap-3">
-                        <FileText className="h-8 w-8 text-primary" />
-                        <div>
-                          <h3 className="font-medium">{doc.name}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {doc.type} • {doc.size} • {new Date(doc.date).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={() => handleDownload(doc.name)}>
-                          <Eye className="h-4 w-4 mr-2" />
-                          Ver
-                        </Button>
-                        <Button size="sm" onClick={() => handleDownload(doc.name)}>
-                          <Download className="h-4 w-4 mr-2" />
-                          Descargar
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
       </main>
       
       <Footer />
