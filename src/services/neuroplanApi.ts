@@ -33,7 +33,8 @@ export const studentsService = {
   uploadReport: (studentId: number, file: File): Promise<ApiResponse<Report>> => {
     const formData = new FormData();
     formData.append('file', file);
-    return api.post(`/uploads/reports/${studentId}`, formData, {
+    formData.append('studentId', String(studentId)); // Enviar studentId como string en FormData
+    return api.post(`/uploads/reports`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

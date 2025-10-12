@@ -133,7 +133,7 @@ const PEIEngine = () => {
     }
   };
 
-  const generatePEI = async (reportId: number) => {
+  const generatePEI = async (reportId: number, studentId: number) => {
     setIsGeneratingPEI(true);
     setIsAnalyzing(true);
     setAnalysisProgress(0);
@@ -150,8 +150,11 @@ const PEIEngine = () => {
         });
       }, 500);
 
-      // Generar PEI real
-      const generateData: GeneratePEIDTO = { reportId };
+      // Generar PEI real - enviar studentId como string
+      const generateData: GeneratePEIDTO = { 
+        reportId, 
+        studentId: String(studentId) 
+      };
       await peisService.generate(generateData);
       
       clearInterval(progressInterval);
@@ -211,7 +214,7 @@ const PEIEngine = () => {
 
     const result = await createStudentAndUploadReport();
     if (result) {
-      await generatePEI(result.report.id);
+      await generatePEI(result.report.id, result.student.id);
     }
   };
 

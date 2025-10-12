@@ -129,6 +129,7 @@ export interface CreateStudentDTO {
 
 export interface GeneratePEIDTO {
   reportId: number;
+  studentId?: number | string; // Opcional, puede ser number o string
 }
 
 export interface UpdatePEIStatusDTO {
