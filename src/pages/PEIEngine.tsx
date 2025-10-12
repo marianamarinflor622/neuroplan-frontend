@@ -34,7 +34,6 @@ import type { Student, PEI, CreateStudentDTO, GeneratePEIDTO } from "../types/ap
 import { toast } from "sonner";
 import { useAuth } from "../contexts/AuthContext";
 import { BedrockDemo } from "@/components/BedrockDemo";
-import WorkflowDemo from "@/components/WorkflowDemo";
 
 const PEIEngine = () => {
   const { user } = useAuth(); // Hook para mantener contexto de autenticación
@@ -1036,16 +1035,6 @@ const PEIEngine = () => {
           <BedrockDemo showTitle={true} />
         </div>
 
-        {/* n8n Workflow Demo Integration */}
-        <div className="mt-12">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold mb-2">Automatización de Workflows</h2>
-            <p className="text-lg text-muted-foreground">
-              Prueba la integración con n8n para automatizar notificaciones y procesos
-            </p>
-          </div>
-          <WorkflowDemo />
-        </div>
 
         {/* CTA Final */}
         <Card className="mt-12 bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
