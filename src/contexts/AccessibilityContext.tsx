@@ -93,15 +93,16 @@ const AccessibilityContext = createContext<AccessibilityContextType | undefined>
 
 export const AccessibilityProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<AccessibilitySettings>(() => {
-    // Cargar desde localStorage si existe
-    const saved = localStorage.getItem('accessibilitySettings');
-    return saved ? JSON.parse(saved) : defaultSettings;
+    // SIEMPRE cargar configuración por defecto (sin filtros)
+    // Limpiar cualquier configuración guardada previamente
+    localStorage.removeItem('accessibilitySettings');
+    return defaultSettings;
   });
 
-  // Guardar en localStorage cuando cambien los settings
-  useEffect(() => {
-    localStorage.setItem('accessibilitySettings', JSON.stringify(settings));
-  }, [settings]);
+  // NO guardar en localStorage - los filtros se resetean cada vez
+  // useEffect(() => {
+  //   localStorage.setItem('accessibilitySettings', JSON.stringify(settings));
+  // }, [settings]);
 
   // Aplicar estilos CSS cuando cambien los settings
   useEffect(() => {
