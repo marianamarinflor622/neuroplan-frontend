@@ -67,11 +67,21 @@ body:not([class*="accessibility-"]) {
    LUPA/MAGNIFIER
    ============================================ */
 
-.accessibility-magnifier *:not(button):not([role="dialog"]):not([aria-label*="Abrir panel"]):hover {
+.accessibility-magnifier *:not(button):not([role="dialog"]):not(.accessibility-trigger-wrapper):not(.accessibility-trigger-wrapper *):not(.accessibility-trigger-btn):not([aria-label*="Abrir panel"]):not([data-radix-popper-content-wrapper]):not([data-radix-popper-content-wrapper] *):hover {
   transform: scale(1.1);
   transition: transform 0.2s ease;
   z-index: 10;
   position: relative;
+}
+
+/* Excluir explícitamente el botón y tooltip de lupa */
+.accessibility-magnifier .accessibility-trigger-wrapper,
+.accessibility-magnifier .accessibility-trigger-wrapper *,
+.accessibility-magnifier .accessibility-trigger-btn,
+.accessibility-magnifier [role="tooltip"],
+.accessibility-magnifier [role="tooltip"] * {
+  transform: none !important;
+  scale: 1 !important;
 }
 
 /* ============================================
