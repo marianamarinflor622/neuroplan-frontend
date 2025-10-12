@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,7 +37,6 @@ import {
 } from "lucide-react";
 
 const PEIResult = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   
   // Datos del PEI (en una implementación real, estos vendrían de la API)
@@ -205,6 +204,10 @@ const PEIResult = () => {
       <Header />
       
       <main className="container mx-auto px-4 py-12">
+        {/* Debug: Verificar que la página se está renderizando */}
+        <div className="mb-4 p-4 bg-red-100 border border-red-300 rounded">
+          <p className="text-red-800">DEBUG: Página PEIResult se está renderizando correctamente</p>
+        </div>
         {/* Header de la página */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
