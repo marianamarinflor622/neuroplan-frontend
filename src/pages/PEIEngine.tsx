@@ -127,7 +127,7 @@ const PEIEngine = () => {
       return { student: newStudent, report: reportResponse.data };
     } catch (error) {
       console.error("Error creating student:", error);
-      toast.error("Error al crear estudiante y subir reporte");
+      toast.error("Error al generar PEI");
       return null;
     } finally {
       setIsCreatingStudent(false);
@@ -421,7 +421,7 @@ const PEIEngine = () => {
                     ) : (
                       <>
                         <Upload className="h-4 w-4 mr-2" />
-                        Crear Estudiante y Generar PEI
+                        Generar PEI
                       </>
                     )}
                   </Button>
