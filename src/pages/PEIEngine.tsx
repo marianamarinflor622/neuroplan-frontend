@@ -26,7 +26,8 @@ import {
   Play,
   RotateCcw,
   Upload,
-  AlertCircle
+  AlertCircle,
+  Plus
 } from "lucide-react";
 import { studentsService, peisService, healthService } from "../services/neuroplanApi";
 import type { Student, PEI, CreateStudentDTO, GeneratePEIDTO } from "../types/api";
@@ -308,6 +309,13 @@ const PEIEngine = () => {
               <Button variant="outline" size="lg" className="group">
                 <Target className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
                 Ver mi Perfil
+              </Button>
+            </Link>
+            
+            <Link to="/generate-pei">
+              <Button variant="outline" size="lg" className="group border-2 hover:bg-primary hover:text-white transition-all duration-300">
+                <Plus className="h-5 w-5 mr-2 group-hover:scale-110 transition-transform" />
+                Generar PEI
               </Button>
             </Link>
           </div>
