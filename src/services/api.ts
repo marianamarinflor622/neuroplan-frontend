@@ -19,11 +19,19 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    return Promise.reject(error);
+    let errorMessage = 'Unknown error';
+    if (error instanceof Error) {
+      return Promise.reject(error);
+    }
+    if (typeof error === 'string') {
+      errorMessage = error;
+    } else if (error?.message) {
+      errorMessage = error.message;
+    }
+    return Promise.reject(new Error(errorMessage));
   }
 );
 
-// Interceptor para responses (manejar errores globalmente)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -32,7 +40,16 @@ api.interceptors.response.use(
       localStorage.removeItem('authToken');
       window.location.href = '/login';
     }
-    return Promise.reject(error);
+    let errorMessage = 'Unknown error';
+    if (error instanceof Error) {
+      return Promise.reject(error);
+    }
+    if (typeof error === 'string') {
+      errorMessage = error;
+    } else if (error?.message) {
+      errorMessage = error.message;
+    }
+    return Promise.reject(new Error(errorMessage));
   }
 );
 

@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
+import { useAccessibility } from '@/contexts/AccessibilityContext';
 import {
   Accessibility,
   X,
@@ -17,6 +19,21 @@ import {
   Palette,
   ChevronDown,
   ChevronUp,
+  MousePointer,
+  Search,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  ZapOff,
+  Image as ImageIcon,
+  VolumeX,
+  Sun,
+  Moon,
+  Contrast,
+  Droplet,
+  Keyboard,
+  FileText,
 } from 'lucide-react';
 
 interface AccessibilityPanelProps {
@@ -28,19 +45,10 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
   isOpen,
   onClose,
 }) => {
+  const { settings, updateSettings, resetAll, resetContent, resetColor, applyProfile, applyColorblindProfile } = useAccessibility();
+  
   // Estados para secciones colapsables
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
-
-  // Estados para sliders de contenido
-  const [fontSize, setFontSize] = useState([100]);
-  const [letterSpacing, setLetterSpacing] = useState([0]);
-  const [lineHeight, setLineHeight] = useState([150]);
-  const [wordSpacing, setWordSpacing] = useState([0]);
-
-  // Estados para sliders de color
-  const [contrast, setContrast] = useState([100]);
-  const [saturation, setSaturation] = useState([100]);
-  const [brightness, setBrightness] = useState([100]);
 
   // Función para toggle de secciones
   const toggleSection = (sectionId: string) => {
@@ -49,32 +57,6 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
         ? prev.filter(id => id !== sectionId)
         : [...prev, sectionId]
     );
-  };
-
-  // Función para reset global
-  const resetAll = () => {
-    setFontSize([100]);
-    setLetterSpacing([0]);
-    setLineHeight([150]);
-    setWordSpacing([0]);
-    setContrast([100]);
-    setSaturation([100]);
-    setBrightness([100]);
-  };
-
-  // Función para reset de contenido
-  const resetContent = () => {
-    setFontSize([100]);
-    setLetterSpacing([0]);
-    setLineHeight([150]);
-    setWordSpacing([0]);
-  };
-
-  // Función para reset de color
-  const resetColor = () => {
-    setContrast([100]);
-    setSaturation([100]);
-    setBrightness([100]);
   };
 
   if (!isOpen) return null;
@@ -135,27 +117,57 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
               
               {expandedSections.includes('accessibility-profiles') && (
                 <div className="mt-2 grid grid-cols-2 gap-2">
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyProfile('epilepsia')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <Focus className="h-4 w-4" />
                     <span className="text-xs">Epilepsia</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyProfile('aprendizaje')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <Brain className="h-4 w-4" />
                     <span className="text-xs">Aprendizaje</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyProfile('discapacidad visual')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <Eye className="h-4 w-4" />
                     <span className="text-xs">Discapacidad visual</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyProfile('mayores')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <Users className="h-4 w-4" />
                     <span className="text-xs">Mayores</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyProfile('tdah')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <Focus className="h-4 w-4" />
                     <span className="text-xs">TDAH</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyProfile('dislexia')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <BookOpen className="h-4 w-4" />
                     <span className="text-xs">Dislexia</span>
                   </Button>
@@ -183,30 +195,402 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
               
               {expandedSections.includes('colorblind-profiles') && (
                 <div className="mt-2 grid grid-cols-2 gap-2">
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyColorblindProfile('deuteranopia')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <Glasses className="h-4 w-4" />
                     <span className="text-xs">Deuteranopia</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyColorblindProfile('deuteranomalía')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <Glasses className="h-4 w-4" />
                     <span className="text-xs">Deuteranomalía</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyColorblindProfile('protanopia')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <Glasses className="h-4 w-4" />
                     <span className="text-xs">Protanopia</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyColorblindProfile('tritanopia')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <Glasses className="h-4 w-4" />
                     <span className="text-xs">Tritanopia</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyColorblindProfile('tritanomalía')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <Glasses className="h-4 w-4" />
                     <span className="text-xs">Tritanomalía</span>
                   </Button>
-                  <Button variant="outline" size="sm" className="h-auto p-3 flex flex-col items-center gap-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => applyColorblindProfile('acromatopsia')}
+                    className="h-auto p-3 flex flex-col items-center gap-1"
+                  >
                     <Glasses className="h-4 w-4" />
                     <span className="text-xs">Acromatopsia</span>
                   </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Herramientas de Accesibilidad Web */}
+            <div>
+              <Button
+                variant="ghost"
+                onClick={() => toggleSection('web-tools')}
+                className="w-full justify-between bg-accessibility-bg hover:bg-accessibility-hover"
+              >
+                <div className="flex items-center gap-2">
+                  <Settings className="h-4 w-4" />
+                  <span>Herramientas de Accesibilidad</span>
+                </div>
+                {expandedSections.includes('web-tools') ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+              </Button>
+              
+              {expandedSections.includes('web-tools') && (
+                <div className="mt-2 space-y-2">
+                  {/* Cursores */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <MousePointer className="h-4 w-4" />
+                      <span className="text-sm">Cursor Negro</span>
+                    </div>
+                    <Switch 
+                      checked={settings.cursorBlack} 
+                      onCheckedChange={(checked) => updateSettings({ cursorBlack: checked })} 
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <MousePointer className="h-4 w-4" />
+                      <span className="text-sm">Cursor Blanco</span>
+                    </div>
+                    <Switch 
+                      checked={settings.cursorWhite} 
+                      onCheckedChange={(checked) => updateSettings({ cursorWhite: checked })} 
+                    />
+                  </div>
+
+                  {/* Guía de lectura */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="h-4 w-4" />
+                      <span className="text-sm">Guía de Lectura</span>
+                    </div>
+                    <Switch 
+                      checked={settings.readingGuide} 
+                      onCheckedChange={(checked) => updateSettings({ readingGuide: checked })} 
+                    />
+                  </div>
+
+                  {/* Lupa */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Search className="h-4 w-4" />
+                      <span className="text-sm">Lupa</span>
+                    </div>
+                    <Switch 
+                      checked={settings.magnifier} 
+                      onCheckedChange={(checked) => updateSettings({ magnifier: checked })} 
+                    />
+                  </div>
+
+                  {/* Navegación por teclado */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Keyboard className="h-4 w-4" />
+                      <span className="text-sm">Navegación por Teclado</span>
+                    </div>
+                    <Switch checked={false} onCheckedChange={() => {}} />
+                  </div>
+
+                  {/* Alineación de texto */}
+                  <div className="p-2 rounded bg-muted space-y-2">
+                    <span className="text-sm font-medium">Alineación de texto</span>
+                    <div className="grid grid-cols-4 gap-1">
+                      <Button 
+                        size="sm" 
+                        variant={settings.textAlignment === 'left' ? 'default' : 'outline'}
+                        onClick={() => updateSettings({ textAlignment: 'left' })}
+                      >
+                        <AlignLeft className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant={settings.textAlignment === 'center' ? 'default' : 'outline'}
+                        onClick={() => updateSettings({ textAlignment: 'center' })}
+                      >
+                        <AlignCenter className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant={settings.textAlignment === 'right' ? 'default' : 'outline'}
+                        onClick={() => updateSettings({ textAlignment: 'right' })}
+                      >
+                        <AlignRight className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant={settings.textAlignment === 'justify' ? 'default' : 'outline'}
+                        onClick={() => updateSettings({ textAlignment: 'justify' })}
+                      >
+                        <AlignJustify className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Bloquear parpadeos */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <ZapOff className="h-4 w-4" />
+                      <span className="text-sm">Bloquear Parpadeos</span>
+                    </div>
+                    <Switch 
+                      checked={settings.blockFlashing} 
+                      onCheckedChange={(checked) => updateSettings({ blockFlashing: checked })} 
+                    />
+                  </div>
+
+                  {/* Enfoque */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Focus className="h-4 w-4" />
+                      <span className="text-sm">Enfoque</span>
+                    </div>
+                    <Switch 
+                      checked={settings.focusMode} 
+                      onCheckedChange={(checked) => updateSettings({ focusMode: checked })} 
+                    />
+                  </div>
+
+                  {/* Fuente dislexia */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      <span className="text-sm">Fuente Dislexia</span>
+                    </div>
+                    <Switch 
+                      checked={settings.dyslexiaFont} 
+                      onCheckedChange={(checked) => updateSettings({ dyslexiaFont: checked })} 
+                    />
+                  </div>
+
+                  {/* Fuente legible */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" />
+                      <span className="text-sm">Fuente Legible</span>
+                    </div>
+                    <Switch 
+                      checked={settings.readableFont} 
+                      onCheckedChange={(checked) => updateSettings({ readableFont: checked })} 
+                    />
+                  </div>
+
+                  {/* Lectura fácil */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="h-4 w-4" />
+                      <span className="text-sm">Lectura Fácil</span>
+                    </div>
+                    <Switch 
+                      checked={settings.easyReading} 
+                      onCheckedChange={(checked) => updateSettings({ easyReading: checked })} 
+                    />
+                  </div>
+
+                  {/* Modo lectura */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="h-4 w-4" />
+                      <span className="text-sm">Modo Lectura</span>
+                    </div>
+                    <Switch 
+                      checked={settings.readingMode} 
+                      onCheckedChange={(checked) => updateSettings({ readingMode: checked })} 
+                    />
+                  </div>
+
+                  {/* Ocultar imágenes */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <ImageIcon className="h-4 w-4" />
+                      <span className="text-sm">Ocultar Imágenes</span>
+                    </div>
+                    <Switch 
+                      checked={settings.hideImages} 
+                      onCheckedChange={(checked) => updateSettings({ hideImages: checked })} 
+                    />
+                  </div>
+
+                  {/* Resaltar enlaces */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Eye className="h-4 w-4" />
+                      <span className="text-sm">Resaltar Enlaces</span>
+                    </div>
+                    <Switch 
+                      checked={settings.highlightLinks} 
+                      onCheckedChange={(checked) => updateSettings({ highlightLinks: checked })} 
+                    />
+                  </div>
+
+                  {/* Resaltar títulos */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Eye className="h-4 w-4" />
+                      <span className="text-sm">Resaltar Títulos</span>
+                    </div>
+                    <Switch 
+                      checked={settings.highlightTitles} 
+                      onCheckedChange={(checked) => updateSettings({ highlightTitles: checked })} 
+                    />
+                  </div>
+
+                  {/* Silenciar sonidos */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <VolumeX className="h-4 w-4" />
+                      <span className="text-sm">Silenciar Sonidos</span>
+                    </div>
+                    <Switch 
+                      checked={settings.muteSounds} 
+                      onCheckedChange={(checked) => updateSettings({ muteSounds: checked })} 
+                    />
+                  </div>
+
+                  {/* Brillo alto */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Sun className="h-4 w-4" />
+                      <span className="text-sm">Brillo Alto</span>
+                    </div>
+                    <Switch 
+                      checked={settings.highBrightness} 
+                      onCheckedChange={(checked) => updateSettings({ highBrightness: checked })} 
+                    />
+                  </div>
+
+                  {/* Brillo bajo */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Moon className="h-4 w-4" />
+                      <span className="text-sm">Brillo Bajo</span>
+                    </div>
+                    <Switch 
+                      checked={settings.lowBrightness} 
+                      onCheckedChange={(checked) => updateSettings({ lowBrightness: checked })} 
+                    />
+                  </div>
+
+                  {/* Contraste alto */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Contrast className="h-4 w-4" />
+                      <span className="text-sm">Contraste Alto</span>
+                    </div>
+                    <Switch 
+                      checked={settings.highContrast} 
+                      onCheckedChange={(checked) => updateSettings({ highContrast: checked })} 
+                    />
+                  </div>
+
+                  {/* Contraste claro */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Sun className="h-4 w-4" />
+                      <span className="text-sm">Contraste Claro</span>
+                    </div>
+                    <Switch 
+                      checked={settings.lightContrast} 
+                      onCheckedChange={(checked) => updateSettings({ lightContrast: checked })} 
+                    />
+                  </div>
+
+                  {/* Contraste invertido */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Contrast className="h-4 w-4" />
+                      <span className="text-sm">Contraste Invertido</span>
+                    </div>
+                    <Switch 
+                      checked={settings.invertedContrast} 
+                      onCheckedChange={(checked) => updateSettings({ invertedContrast: checked })} 
+                    />
+                  </div>
+
+                  {/* Contraste oscuro */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Moon className="h-4 w-4" />
+                      <span className="text-sm">Contraste Oscuro</span>
+                    </div>
+                    <Switch 
+                      checked={settings.darkContrast} 
+                      onCheckedChange={(checked) => updateSettings({ darkContrast: checked })} 
+                    />
+                  </div>
+
+                  {/* Monocromo */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Palette className="h-4 w-4" />
+                      <span className="text-sm">Monocromo</span>
+                    </div>
+                    <Switch 
+                      checked={settings.monochrome} 
+                      onCheckedChange={(checked) => updateSettings({ monochrome: checked })} 
+                    />
+                  </div>
+
+                  {/* Saturación alta */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Droplet className="h-4 w-4" />
+                      <span className="text-sm">Saturación Alta</span>
+                    </div>
+                    <Switch 
+                      checked={settings.highSaturation} 
+                      onCheckedChange={(checked) => updateSettings({ highSaturation: checked })} 
+                    />
+                  </div>
+
+                  {/* Saturación baja */}
+                  <div className="flex items-center justify-between p-2 rounded bg-muted">
+                    <div className="flex items-center gap-2">
+                      <Droplet className="h-4 w-4" />
+                      <span className="text-sm">Saturación Baja</span>
+                    </div>
+                    <Switch 
+                      checked={settings.lowSaturation} 
+                      onCheckedChange={(checked) => updateSettings({ lowSaturation: checked })} 
+                    />
+                  </div>
                 </div>
               )}
             </div>
@@ -232,55 +616,59 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
               {expandedSections.includes('content-settings') && (
                 <div className="mt-2 space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Tamaño de fuente</label>
+                    <label htmlFor="fontSize-slider" className="text-sm font-medium">Tamaño de fuente</label>
                     <Slider
-                      value={fontSize}
-                      onValueChange={setFontSize}
+                      id="fontSize-slider"
+                      value={[settings.fontSize]}
+                      onValueChange={(value) => updateSettings({ fontSize: value[0] })}
                       max={200}
                       min={50}
                       step={10}
                       className="w-full"
                     />
-                    <p className="text-xs text-muted-foreground">{fontSize[0]}%</p>
+                    <p className="text-xs text-muted-foreground">{settings.fontSize}%</p>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Espacio entre letras</label>
+                    <label htmlFor="letterSpacing-slider" className="text-sm font-medium">Espacio entre letras</label>
                     <Slider
-                      value={letterSpacing}
-                      onValueChange={setLetterSpacing}
+                      id="letterSpacing-slider"
+                      value={[settings.letterSpacing]}
+                      onValueChange={(value) => updateSettings({ letterSpacing: value[0] })}
                       max={10}
                       min={-2}
                       step={1}
                       className="w-full"
                     />
-                    <p className="text-xs text-muted-foreground">{letterSpacing[0]}px</p>
+                    <p className="text-xs text-muted-foreground">{settings.letterSpacing}px</p>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Espacio entre líneas</label>
+                    <label htmlFor="lineHeight-slider" className="text-sm font-medium">Espacio entre líneas</label>
                     <Slider
-                      value={lineHeight}
-                      onValueChange={setLineHeight}
+                      id="lineHeight-slider"
+                      value={[settings.lineHeight]}
+                      onValueChange={(value) => updateSettings({ lineHeight: value[0] })}
                       max={300}
                       min={100}
                       step={10}
                       className="w-full"
                     />
-                    <p className="text-xs text-muted-foreground">{lineHeight[0]}%</p>
+                    <p className="text-xs text-muted-foreground">{settings.lineHeight}%</p>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Espacio entre palabras</label>
+                    <label htmlFor="wordSpacing-slider" className="text-sm font-medium">Espacio entre palabras</label>
                     <Slider
-                      value={wordSpacing}
-                      onValueChange={setWordSpacing}
+                      id="wordSpacing-slider"
+                      value={[settings.wordSpacing]}
+                      onValueChange={(value) => updateSettings({ wordSpacing: value[0] })}
                       max={20}
                       min={0}
                       step={1}
                       className="w-full"
                     />
-                    <p className="text-xs text-muted-foreground">{wordSpacing[0]}px</p>
+                    <p className="text-xs text-muted-foreground">{settings.wordSpacing}px</p>
                   </div>
 
                   <Button
@@ -317,42 +705,45 @@ export const AccessibilityPanel: React.FC<AccessibilityPanelProps> = ({
               {expandedSections.includes('color-tools') && (
                 <div className="mt-2 space-y-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Contraste</label>
+                    <label htmlFor="contrast-slider" className="text-sm font-medium">Contraste</label>
                     <Slider
-                      value={contrast}
-                      onValueChange={setContrast}
+                      id="contrast-slider"
+                      value={[settings.contrast]}
+                      onValueChange={(value) => updateSettings({ contrast: value[0] })}
                       max={150}
                       min={50}
                       step={5}
                       className="w-full"
                     />
-                    <p className="text-xs text-muted-foreground">{contrast[0]}%</p>
+                    <p className="text-xs text-muted-foreground">{settings.contrast}%</p>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Saturación</label>
+                    <label htmlFor="saturation-slider" className="text-sm font-medium">Saturación</label>
                     <Slider
-                      value={saturation}
-                      onValueChange={setSaturation}
+                      id="saturation-slider"
+                      value={[settings.saturation]}
+                      onValueChange={(value) => updateSettings({ saturation: value[0] })}
                       max={200}
                       min={0}
                       step={10}
                       className="w-full"
                     />
-                    <p className="text-xs text-muted-foreground">{saturation[0]}%</p>
+                    <p className="text-xs text-muted-foreground">{settings.saturation}%</p>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Brillo</label>
+                    <label htmlFor="brightness-slider" className="text-sm font-medium">Brillo</label>
                     <Slider
-                      value={brightness}
-                      onValueChange={setBrightness}
+                      id="brightness-slider"
+                      value={[settings.brightness]}
+                      onValueChange={(value) => updateSettings({ brightness: value[0] })}
                       max={150}
                       min={50}
                       step={5}
                       className="w-full"
                     />
-                    <p className="text-xs text-muted-foreground">{brightness[0]}%</p>
+                    <p className="text-xs text-muted-foreground">{settings.brightness}%</p>
                   </div>
 
                   <Button

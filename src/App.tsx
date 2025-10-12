@@ -8,6 +8,7 @@ import { AccessibilityPanel } from "@/components/AccessibilityPanel";
 import { AccessibilityTrigger } from "@/components/AccessibilityTrigger";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { AccessibilityProvider } from "@/contexts/AccessibilityContext";
 import Index from "./pages/Index";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
@@ -28,70 +29,72 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/registro" element={<Register />} />
-              <Route path="/login" element={<Login />} />
-              <Route 
-                path="/dashboard" 
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/perfil" 
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/itinerario" 
-                element={
-                  <ProtectedRoute>
-                    <Itinerary />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path="/recursos" 
-                element={<Resources />}
-              />
-              <Route 
-                path="/pei-engine" 
-                element={<PEIEngine />}
-              />
-              <Route 
-                path="/bedrock-demo" 
-                element={<BedrockDemo />}
-              />
-              <Route 
-                path="/workflow-demo" 
-                element={<WorkflowDemo />}
-              />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-          
-          {/* Panel de Accesibilidad */}
-          <AccessibilityPanel 
-            isOpen={isPanelOpen} 
-            onClose={() => setIsPanelOpen(false)} 
-          />
-          
-          {/* Botón de Acceso */}
-          <AccessibilityTrigger 
-            onClick={() => setIsPanelOpen(true)} 
-          />
-        </TooltipProvider>
+        <AccessibilityProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/registro" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+                <Route 
+                  path="/dashboard" 
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/perfil" 
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/itinerario" 
+                  element={
+                    <ProtectedRoute>
+                      <Itinerary />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/recursos" 
+                  element={<Resources />}
+                />
+                <Route 
+                  path="/pei-engine" 
+                  element={<PEIEngine />}
+                />
+                <Route 
+                  path="/bedrock-demo" 
+                  element={<BedrockDemo />}
+                />
+                <Route 
+                  path="/workflow-demo" 
+                  element={<WorkflowDemo />}
+                />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+            
+            {/* Panel de Accesibilidad */}
+            <AccessibilityPanel 
+              isOpen={isPanelOpen} 
+              onClose={() => setIsPanelOpen(false)} 
+            />
+            
+            {/* Botón de Acceso */}
+            <AccessibilityTrigger 
+              onClick={() => setIsPanelOpen(true)} 
+            />
+          </TooltipProvider>
+        </AccessibilityProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

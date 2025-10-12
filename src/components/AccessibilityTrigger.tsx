@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Accessibility } from 'lucide-react';
@@ -8,22 +8,68 @@ interface AccessibilityTriggerProps {
 }
 
 export const AccessibilityTrigger: React.FC<AccessibilityTriggerProps> = ({ onClick }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    
+    // Crear un contenedor específico para el botón si no existe
+    let container = document.getElementById('accessibility-trigger-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'accessibility-trigger-container';
+      container.style.cssText = `
+        position: fixed !important;
+        bottom: 24px !important;
+        right: 24px !important;
+        z-index: 2147483647 !important;
+        pointer-events: none !important;
+      `;
+      document.body.appendChild(container);
+    }
+  }, []);
+
+  if (!mounted) return null;
+
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            onClick={onClick}
-            className="fixed bottom-6 right-6 z-40 rounded-full h-14 w-14 bg-primary hover:bg-primary/90 hover:scale-110 transition-transform shadow-lg"
-            aria-label="Abrir panel de accesibilidad"
-          >
-            <Accessibility className="h-6 w-6 text-primary-foreground" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="left">
-          <p>Accesibilidad</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <div
+      style={{
+        position: 'fixed',
+        bottom: '24px',
+        right: '24px',
+        zIndex: 2147483647, // Máximo valor de z-index
+        pointerEvents: 'none',
+      }}
+    >
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              onClick={onClick}
+              size="lg"
+              style={{
+                pointerEvents: 'auto',
+                borderRadius: '50%',
+                width: '64px',
+                height: '64px',
+                padding: 0,
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+                backgroundColor: 'hsl(var(--primary))',
+                color: 'white',
+                position: 'relative',
+                zIndex: 2147483647,
+              }}
+              aria-label="Abrir panel de accesibilidad"
+              className="hover:scale-110 transition-transform duration-200"
+            >
+              <Accessibility className="h-7 w-7" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="left">
+            <p>Accesibilidad</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
   );
 };
