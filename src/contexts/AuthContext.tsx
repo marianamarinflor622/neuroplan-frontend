@@ -1,11 +1,20 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { authService } from '../services/neuroplanApi';
+import { UserRole } from '../types/api';
 
 interface User {
   id: string;
   email: string;
   nombre: string;
   apellidos: string;
+  rol?: UserRole;
+  centroId?: string;
+  centro?: {
+    id: string;
+    nombre: string;
+    codigo: string;
+  };
+  activo?: boolean;
   perfilNeuroAcademico?: {
     nivelActual: string;
     objetivosAcademicos: string;
@@ -80,12 +89,32 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       // Fallback: Simulamos login para demo (cuando backend no esté disponible)
       await new Promise(resolve => setTimeout(resolve, 1000));
       
+      // Determinar rol basado en email
+      let userRole: UserRole = UserRole.ADMIN;
+      if (email.includes('estudiante') || email.includes('familia')) {
+        userRole = UserRole.ESTUDIANTE_FAMILIA;
+      } else if (email.includes('orientador')) {
+        userRole = UserRole.ORIENTADOR;
+      } else if (email.includes('profesor')) {
+        userRole = UserRole.PROFESOR;
+      } else if (email.includes('director')) {
+        userRole = UserRole.DIRECTOR_CENTRO;
+      }
+
       // Simular datos de usuario para demo
       const userData: User = {
         id: '1',
         email,
         nombre: 'Usuario',
         apellidos: 'Demo',
+        rol: userRole,
+        centroId: 'centro-demo-1',
+        centro: {
+          id: 'centro-demo-1',
+          nombre: 'Centro Educativo Demo',
+          codigo: 'CED001'
+        },
+        activo: true,
         perfilNeuroAcademico: {
           nivelActual: 'Bachillerato',
           objetivosAcademicos: 'Acceder a la universidad',

@@ -105,58 +105,29 @@ export const AccessibilityProvider: React.FC<{ children: ReactNode }> = ({ child
   // }, [settings]);
 
   // Aplicar estilos CSS cuando cambien los settings
-  useEffect(() => {
-    const root = document.documentElement;
-    
-    // Aplicar fuentes
-    if (settings.fontSize !== 100) {
-      root.style.setProperty('--accessibility-font-size', `${settings.fontSize}%`);
-    } else {
-      root.style.removeProperty('--accessibility-font-size');
-    }
-    
-    if (settings.letterSpacing !== 0) {
-      root.style.setProperty('--accessibility-letter-spacing', `${settings.letterSpacing}px`);
-    } else {
-      root.style.removeProperty('--accessibility-letter-spacing');
-    }
-    
-    if (settings.lineHeight !== 150) {
-      root.style.setProperty('--accessibility-line-height', `${settings.lineHeight}%`);
-    } else {
-      root.style.removeProperty('--accessibility-line-height');
-    }
-    
-    if (settings.wordSpacing !== 0) {
-      root.style.setProperty('--accessibility-word-spacing', `${settings.wordSpacing}px`);
-    } else {
-      root.style.removeProperty('--accessibility-word-spacing');
-    }
-
-    // Aplicar colores
-    if (settings.contrast !== 100) {
-      root.style.setProperty('--accessibility-contrast', `${settings.contrast}%`);
-    } else {
-      root.style.removeProperty('--accessibility-contrast');
-    }
-    
-    if (settings.saturation !== 100) {
-      root.style.setProperty('--accessibility-saturation', `${settings.saturation}%`);
-    } else {
-      root.style.removeProperty('--accessibility-saturation');
-    }
-    
-    if (settings.brightness !== 100) {
-      root.style.setProperty('--accessibility-brightness', `${settings.brightness}%`);
-    } else {
-      root.style.removeProperty('--accessibility-brightness');
-    }
-
-    // Aplicar clases al body
-    const body = document.body;
-    
-    // Limpiar clases anteriores (incluyendo daltonismo)
-    body.classList.remove(
+    // Helpers para reducir complejidad cognitiva
+    const setCSSVar = (root: HTMLElement, name: string, value: number, defaultValue: number, unit: string) => {
+      if (value !== defaultValue) {
+        root.style.setProperty(name, `${value}${unit}`);
+      } else {
+        root.style.removeProperty(name);
+      }
+    };
+  
+    const applyTypography = (root: HTMLElement, s: AccessibilitySettings) => {
+      setCSSVar(root, '--accessibility-font-size', s.fontSize, 100, '%');
+      setCSSVar(root, '--accessibility-letter-spacing', s.letterSpacing, 0, 'px');
+      setCSSVar(root, '--accessibility-line-height', s.lineHeight, 150, '%');
+      setCSSVar(root, '--accessibility-word-spacing', s.wordSpacing, 0, 'px');
+    };
+  
+    const applyColors = (root: HTMLElement, s: AccessibilitySettings) => {
+      setCSSVar(root, '--accessibility-contrast', s.contrast, 100, '%');
+      setCSSVar(root, '--accessibility-saturation', s.saturation, 100, '%');
+      setCSSVar(root, '--accessibility-brightness', s.brightness, 100, '%');
+    };
+  
+    const ALL_BODY_CLASSES = [
       'accessibility-cursor-black',
       'accessibility-cursor-white',
       'accessibility-reading-guide',
@@ -191,39 +162,63 @@ export const AccessibilityProvider: React.FC<{ children: ReactNode }> = ({ child
       'accessibility-colorblind-tritanopia',
       'accessibility-colorblind-tritanomalía',
       'accessibility-colorblind-acromatopsia'
-    );
-
-    // Aplicar clases activas
-    if (settings.cursorBlack) body.classList.add('accessibility-cursor-black');
-    if (settings.cursorWhite) body.classList.add('accessibility-cursor-white');
-    if (settings.readingGuide) body.classList.add('accessibility-reading-guide');
-    if (settings.magnifier) body.classList.add('accessibility-magnifier');
-    if (settings.textAlignment) body.classList.add(`accessibility-text-${settings.textAlignment}`);
-    if (settings.blockFlashing) body.classList.add('accessibility-block-flashing');
-    if (settings.focusMode) body.classList.add('accessibility-focus-mode');
-    if (settings.dyslexiaFont) body.classList.add('accessibility-dyslexia-font');
-    if (settings.readableFont) body.classList.add('accessibility-readable-font');
-    if (settings.easyReading) body.classList.add('accessibility-easy-reading');
-    if (settings.readingMode) body.classList.add('accessibility-reading-mode');
-    if (settings.hideImages) body.classList.add('accessibility-hide-images');
-    if (settings.highlightLinks) body.classList.add('accessibility-highlight-links');
-    if (settings.highlightTitles) body.classList.add('accessibility-highlight-titles');
-    if (settings.muteSounds) body.classList.add('accessibility-mute-sounds');
-    if (settings.highBrightness) body.classList.add('accessibility-high-brightness');
-    if (settings.lowBrightness) body.classList.add('accessibility-low-brightness');
-    if (settings.highContrast) body.classList.add('accessibility-high-contrast');
-    if (settings.lightContrast) body.classList.add('accessibility-light-contrast');
-    if (settings.invertedContrast) body.classList.add('accessibility-inverted-contrast');
-    if (settings.darkContrast) body.classList.add('accessibility-dark-contrast');
-    if (settings.monochrome) body.classList.add('accessibility-monochrome');
-    if (settings.highSaturation) body.classList.add('accessibility-high-saturation');
-    if (settings.lowSaturation) body.classList.add('accessibility-low-saturation');
-
-    // Aplicar filtros de daltonismo
-    if (settings.activeColorblindProfile) {
-      body.classList.add(`accessibility-colorblind-${settings.activeColorblindProfile.toLowerCase()}`);
-    }
-  }, [settings]);
+    ];
+  
+    const addActiveClasses = (body: HTMLElement, s: AccessibilitySettings) => {
+      body.classList.remove(...ALL_BODY_CLASSES);
+  
+      const conditionalClasses: Array<[boolean, string]> = [
+        [s.cursorBlack, 'accessibility-cursor-black'],
+        [s.cursorWhite, 'accessibility-cursor-white'],
+        [s.readingGuide, 'accessibility-reading-guide'],
+        [s.magnifier, 'accessibility-magnifier'],
+        [s.blockFlashing, 'accessibility-block-flashing'],
+        [s.focusMode, 'accessibility-focus-mode'],
+        [s.dyslexiaFont, 'accessibility-dyslexia-font'],
+        [s.readableFont, 'accessibility-readable-font'],
+        [s.easyReading, 'accessibility-easy-reading'],
+        [s.readingMode, 'accessibility-reading-mode'],
+        [s.hideImages, 'accessibility-hide-images'],
+        [s.highlightLinks, 'accessibility-highlight-links'],
+        [s.highlightTitles, 'accessibility-highlight-titles'],
+        [s.muteSounds, 'accessibility-mute-sounds'],
+        [s.highBrightness, 'accessibility-high-brightness'],
+        [s.lowBrightness, 'accessibility-low-brightness'],
+        [s.highContrast, 'accessibility-high-contrast'],
+        [s.lightContrast, 'accessibility-light-contrast'],
+        [s.invertedContrast, 'accessibility-inverted-contrast'],
+        [s.darkContrast, 'accessibility-dark-contrast'],
+        [s.monochrome, 'accessibility-monochrome'],
+        [s.highSaturation, 'accessibility-high-saturation'],
+        [s.lowSaturation, 'accessibility-low-saturation']
+      ];
+  
+      conditionalClasses.forEach(([cond, cls]) => {
+        if (cond) body.classList.add(cls);
+      });
+  
+      if (s.textAlignment) {
+        body.classList.add(`accessibility-text-${s.textAlignment}`);
+      }
+  
+      if (s.activeColorblindProfile) {
+        body.classList.add(`accessibility-colorblind-${s.activeColorblindProfile.toLowerCase()}`);
+      }
+    };
+  
+    useEffect(() => {
+      const root = document.documentElement;
+      const body = document.body;
+  
+      // Aplicar fuentes
+      applyTypography(root, settings);
+  
+      // Aplicar colores
+      applyColors(root, settings);
+  
+      // Aplicar clases al body
+      addActiveClasses(body, settings);
+    }, [settings]);
 
   const updateSettings = useCallback((newSettings: Partial<AccessibilitySettings>) => {
     setSettings(prev => ({ ...prev, ...newSettings }));

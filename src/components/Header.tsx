@@ -45,43 +45,46 @@ export const Header = () => {
 
         <div className="flex items-center gap-4">
           {isAuthenticated ? (
-            <>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="hidden md:inline-flex">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="hidden md:inline-flex">
+                  <User className="h-4 w-4 mr-2" />
+                  {user?.nombre} {user?.apellidos}
+                  {user?.rol && (
+                    <span className="ml-2 px-2 py-1 text-xs bg-primary/10 text-primary rounded-full">
+                      {user.rol}
+                    </span>
+                  )}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <Link to="/dashboard" className="flex items-center">
+                    <TrendingUp className="h-4 w-4 mr-2" />
+                    Dashboard
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/perfil" className="flex items-center">
                     <User className="h-4 w-4 mr-2" />
-                    {user?.nombre} {user?.apellidos}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem asChild>
-                    <Link to="/dashboard" className="flex items-center">
-                      <TrendingUp className="h-4 w-4 mr-2" />
-                      Dashboard
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/perfil" className="flex items-center">
-                      <User className="h-4 w-4 mr-2" />
-                      Mi Perfil NeuroAcadémico
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link to="/itinerario" className="flex items-center">
-                      <GraduationCap className="h-4 w-4 mr-2" />
-                      Mi Itinerario
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout} className="text-destructive">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Cerrar sesión
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </>
+                    Mi Perfil NeuroAcadémico
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/itinerario" className="flex items-center">
+                    <GraduationCap className="h-4 w-4 mr-2" />
+                    Mi Itinerario
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={logout} className="text-destructive">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Cerrar sesión
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <>
+            <div className="flex items-center gap-4">
               <Link to="/login">
                 <Button variant="ghost" size="sm" className="hidden md:inline-flex">
                   Iniciar sesión
@@ -92,7 +95,7 @@ export const Header = () => {
                   Crear Perfil NeuroAcadémico
                 </Button>
               </Link>
-            </>
+            </div>
           )}
           <Button variant="ghost" size="icon" className="md:hidden">
             <Menu className="h-5 w-5" />

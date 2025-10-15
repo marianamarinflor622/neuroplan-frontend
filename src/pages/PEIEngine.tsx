@@ -45,6 +45,9 @@ const PEIEngine = () => {
   const [peis, setPeis] = useState<PEI[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [studentName, setStudentName] = useState("");
+  const [studentLastName, setStudentLastName] = useState("");
+  const [studentBirthDate, setStudentBirthDate] = useState("");
+  const [studentGrade, setStudentGrade] = useState("");
   const [isCreatingStudent, setIsCreatingStudent] = useState(false);
   const [isGeneratingPEI, setIsGeneratingPEI] = useState(false);
   
@@ -93,19 +96,19 @@ const PEIEngine = () => {
   };
 
   const createStudentAndUploadReport = async () => {
-    if (!selectedFile || !studentName.trim()) {
-      toast.error("Por favor selecciona un archivo y nombre del estudiante");
+    if (!selectedFile || !studentName.trim() || !studentLastName.trim() || !studentBirthDate || !studentGrade.trim()) {
+      toast.error("Por favor completa todos los campos requeridos");
       return;
     }
 
     setIsCreatingStudent(true);
     try {
-      // Crear estudiante
+      // Crear estudiante con campos actualizados
       const studentData: CreateStudentDTO = {
-        name: studentName,
-        dateOfBirth: "2010-01-01", // Por ahora fecha por defecto
-        gradeLevel: "Primaria",
-        diagnosis: "TDAH + Dislexia"
+        name: studentName.trim(),
+        lastName: studentLastName.trim(),
+        birthDate: studentBirthDate, // Formato YYYY-MM-DD
+        grade: studentGrade.trim(),
       };
 
       const studentResponse = await studentsService.create(studentData);
@@ -122,18 +125,21 @@ const PEIEngine = () => {
       // Limpiar formulario
       setSelectedFile(null);
       setStudentName("");
+      setStudentLastName("");
+      setStudentBirthDate("");
+      setStudentGrade("");
       
       return { student: newStudent, report: reportResponse.data };
     } catch (error) {
       console.error("Error creating student:", error);
-      toast.error("Error al generar PEI");
+      toast.error("Error al crear estudiante");
       return null;
     } finally {
       setIsCreatingStudent(false);
     }
   };
 
-  const generatePEI = async (reportId: number, studentId: number) => {
+  const generatePEI = async (reportId: string, studentId: string) => {
     setIsGeneratingPEI(true);
     setIsAnalyzing(true);
     setAnalysisProgress(0);
@@ -150,18 +156,11 @@ const PEIEngine = () => {
         });
       }, 500);
 
-      // Generar PEI real - enviar studentId como string
+      // Generar PEI real
       const generateData: GeneratePEIDTO = { 
         reportId, 
-        studentId: String(studentId) 
+        studentId
       };
-      
-      // DEBUG: Verificar datos antes de enviar
-      console.log('🔍 Generando PEI con datos:', generateData);
-      console.log('📊 Tipos:', {
-        reportId: typeof generateData.reportId,
-        studentId: typeof generateData.studentId
-      });
       
       await peisService.generate(generateData);
       
@@ -371,30 +370,101 @@ const PEIEngine = () => {
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <div>
-                    <label htmlFor="studentName" className="block text-sm font-medium mb-2">Nombre del Estudiante</label>
-                    <input
-                      id="studentName"
-                      type="text"
-                      value={studentName}
-                      onChange={(e) => setStudentName(e.target.value)}
-                      placeholder="Ej: María González"
-                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary/20"
-                    />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="studentName" className="block text-sm font-medium mb-2">
+                        Nombre <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="studentName"
+                        type="text"
+                        value={studentName}
+                        onChange={(e) => setStudentName(e.target.value)}
+                        placeholder="Ej: María"
+                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary/20"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="studentLastName" className="block text-sm font-medium mb-2">
+                        Apellido <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="studentLastName"
+                        type="text"
+                        value={studentLastName}
+                        onChange={(e) => setStudentLastName(e.target.value)}
+                        placeholder="Ej: González"
+                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary/20"
+                        required
+                      />
+                    </div>
                   </div>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="studentBirthDate" className="block text-sm font-medium mb-2">
+                        Fecha de Nacimiento <span className="text-red-500">*</span>
+                      </label>
+                      <input
+                        id="studentBirthDate"
+                        type="date"
+                        value={studentBirthDate}
+                        onChange={(e) => setStudentBirthDate(e.target.value)}
+                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary/20"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="studentGrade" className="block text-sm font-medium mb-2">
+                        Grado <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        id="studentGrade"
+                        value={studentGrade}
+                        onChange={(e) => setStudentGrade(e.target.value)}
+                        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary/20"
+                        required
+                      >
+                        <option value="">Seleccionar...</option>
+                        <option value="Preescolar">Preescolar</option>
+                        <option value="1º Primaria">1º Primaria</option>
+                        <option value="2º Primaria">2º Primaria</option>
+                        <option value="3º Primaria">3º Primaria</option>
+                        <option value="4º Primaria">4º Primaria</option>
+                        <option value="5º Primaria">5º Primaria</option>
+                        <option value="6º Primaria">6º Primaria</option>
+                        <option value="1º ESO">1º ESO</option>
+                        <option value="2º ESO">2º ESO</option>
+                        <option value="3º ESO">3º ESO</option>
+                        <option value="4º ESO">4º ESO</option>
+                        <option value="1º Bachillerato">1º Bachillerato</option>
+                        <option value="2º Bachillerato">2º Bachillerato</option>
+                      </select>
+                    </div>
+                  </div>
+                  
                   <div>
-                    <label htmlFor="reportFile" className="block text-sm font-medium mb-2">Reporte Médico (PDF)</label>
+                    <label htmlFor="reportFile" className="block text-sm font-medium mb-2">
+                      Reporte Médico <span className="text-red-500">*</span>
+                    </label>
                     <input
                       id="reportFile"
                       type="file"
                       accept=".pdf,.doc,.docx,.jpg,.png"
                       onChange={handleFileChange}
-                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary/20"
+                      className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary/20 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-white hover:file:bg-primary/90"
+                      required
                     />
                     {selectedFile && (
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Archivo: {selectedFile.name} ({(selectedFile.size / 1024 / 1024).toFixed(2)} MB)
-                      </p>
+                      <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-lg">
+                        <p className="text-sm text-green-800 font-medium">
+                          ✓ {selectedFile.name}
+                        </p>
+                        <p className="text-xs text-green-600">
+                          {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -420,7 +490,7 @@ const PEIEngine = () => {
                   </ol>
                   <Button 
                     onClick={handleCreateAndGenerate}
-                    disabled={isCreatingStudent || isGeneratingPEI || !studentName.trim() || !selectedFile}
+                    disabled={isCreatingStudent || isGeneratingPEI || !studentName.trim() || !studentLastName.trim() || !studentBirthDate || !studentGrade || !selectedFile}
                     className="w-full"
                   >
                     {isCreatingStudent || isGeneratingPEI ? (
@@ -446,11 +516,14 @@ const PEIEngine = () => {
                     {students.slice(0, 6).map((student) => (
                       <Card key={student.id} className="hover:shadow-md transition-shadow">
                         <CardContent className="p-4">
-                          <h5 className="font-medium">{student.name}</h5>
-                          <p className="text-sm text-muted-foreground">{student.gradeLevel}</p>
-                          {student.diagnosis && (
+                          <h5 className="font-medium">{student.name} {student.lastName}</h5>
+                          <p className="text-sm text-muted-foreground">{student.grade}</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Nacimiento: {new Date(student.birthDate).toLocaleDateString()}
+                          </p>
+                          {student.school && (
                             <Badge variant="outline" className="mt-2 text-xs">
-                              {student.diagnosis}
+                              {student.school}
                             </Badge>
                           )}
                         </CardContent>

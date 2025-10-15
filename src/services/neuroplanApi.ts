@@ -19,26 +19,23 @@ import type {
 export const studentsService = {
   // Crear estudiante
   create: (data: CreateStudentDTO): Promise<ApiResponse<Student>> =>
-    api.post('/upload/students', data).then(res => res.data),
+    api.post('/uploads/students', data).then(res => res.data),
 
   // Listar estudiantes
   getAll: (): Promise<ApiResponse<Student[]>> =>
-    api.get('/upload/students').then(res => res.data),
+    api.get('/uploads/students').then(res => res.data),
 
   // Obtener estudiante por ID
-  getById: (id: number): Promise<ApiResponse<Student>> =>
-    api.get(`/upload/students/${id}`).then(res => res.data),
+  getById: (id: string): Promise<ApiResponse<Student>> =>
+    api.get(`/uploads/students/${id}`).then(res => res.data),
 
   // Subir reporte médico
-  uploadReport: (studentId: number, file: File): Promise<ApiResponse<Report>> => {
+  uploadReport: (studentId: string, file: File): Promise<ApiResponse<Report>> => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('studentId', String(studentId)); // Enviar studentId como string en FormData
+    formData.append('studentId', studentId); // studentId es string (UUID)
     
-    // DEBUG: Verificar FormData
-    console.log('📤 Subiendo reporte con studentId:', studentId, 'tipo:', typeof String(studentId));
-    
-    return api.post(`/upload/reports`, formData, {
+    return api.post(`/uploads/reports`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -46,32 +43,42 @@ export const studentsService = {
   },
 
   // Descargar reporte
-  downloadReport: (reportId: number): Promise<Blob> =>
-    api.get(`/upload/reports/${reportId}/download`, {
+  downloadReport: (reportId: string): Promise<Blob> =>
+    api.get(`/uploads/reports/${reportId}/download`, {
       responseType: 'blob',
     }).then(res => res.data),
 };
 
 // PEIs Service
 export const peisService = {
+  // Generar PEI desde diagnóstico directo (sin archivo)
+  generateFromDiagnosis: (data: {
+    studentId: string;
+    diagnosis: string[];
+    symptoms?: string[];
+    strengths?: string[];
+    additionalNotes?: string;
+  }): Promise<ApiResponse<PEI>> =>
+    api.post('/peis/generate-from-diagnosis', data).then(res => res.data),
+
   // Generar PEI desde reporte
   generate: (data: GeneratePEIDTO): Promise<ApiResponse<PEI>> =>
     api.post('/peis/generate', data).then(res => res.data),
 
   // Listar PEIs
-  getAll: (filters?: { status?: string; studentId?: number }): Promise<ApiResponse<PEI[]>> =>
+  getAll: (filters?: { status?: string; studentId?: string }): Promise<ApiResponse<PEI[]>> =>
     api.get('/peis', { params: filters }).then(res => res.data),
 
   // Obtener PEI por ID
-  getById: (id: number): Promise<ApiResponse<PEI>> =>
+  getById: (id: string): Promise<ApiResponse<PEI>> =>
     api.get(`/peis/${id}`).then(res => res.data),
 
   // Actualizar estado del PEI
-  updateStatus: (id: number, data: UpdatePEIStatusDTO): Promise<ApiResponse<PEI>> =>
+  updateStatus: (id: string, data: UpdatePEIStatusDTO): Promise<ApiResponse<PEI>> =>
     api.patch(`/peis/${id}/status`, data).then(res => res.data),
 
   // Descargar PEI como PDF
-  downloadPDF: (id: number): Promise<Blob> =>
+  downloadPDF: (id: string): Promise<Blob> =>
     api.get(`/peis/${id}/pdf`, {
       responseType: 'blob',
     }).then(res => res.data),
@@ -84,12 +91,16 @@ export const audioService = {
     api.post('/elevenlabs/text-to-speech', data).then(res => res.data),
 
   // Generar audio completo del PEI
-  generatePEIAudio: (peiId: number): Promise<ApiResponse<AudioFile>> =>
+  generatePEIAudio: (peiId: string): Promise<ApiResponse<AudioFile>> =>
     api.post(`/elevenlabs/pei/${peiId}/audio`).then(res => res.data),
 
   // Generar resumen en audio del PEI
-  generatePEISummaryAudio: (peiId: number): Promise<ApiResponse<AudioFile>> =>
+  generatePEISummaryAudio: (peiId: string): Promise<ApiResponse<AudioFile>> =>
     api.get(`/elevenlabs/pei/${peiId}/summary-audio`).then(res => res.data),
+
+  // Listar todos los audios de un PEI específico
+  listPEIAudios: (peiId: string): Promise<ApiResponse<AudioFile[]>> =>
+    api.get(`/elevenlabs/pei/${peiId}/audios`).then(res => res.data),
 
   // Listar voces disponibles
   getVoices: (): Promise<ApiResponse<any[]>> =>
@@ -102,8 +113,16 @@ export const resourcesService = {
   search: (data: SearchResourcesDTO): Promise<ApiResponse<ResourceLink[]>> =>
     api.post('/linkup/search', data).then(res => res.data),
 
+  // Generar recursos automáticos para un PEI
+  generateForPEI: (peiId: string, options?: {
+    limit?: number;
+    categories?: string[];
+    grade?: string;
+  }): Promise<ApiResponse<any>> =>
+    api.post(`/linkup/pei/${peiId}/resources`, options || {}).then(res => res.data),
+
   // Obtener recursos recomendados para un PEI
-  getForPEI: (peiId: number): Promise<ApiResponse<ResourceLink[]>> =>
+  getForPEI: (peiId: string): Promise<ApiResponse<ResourceLink[]>> =>
     api.get(`/linkup/pei/${peiId}/resources`).then(res => res.data),
 
   // Búsqueda rápida
@@ -118,12 +137,20 @@ export const workflowService = {
     api.post('/n8n/trigger-workflow', data).then(res => res.data),
 
   // Notificar generación de PEI
-  notifyPEIGenerated: (peiId: number): Promise<ApiResponse<WorkflowExecution>> =>
+  notifyPEIGenerated: (peiId: string): Promise<ApiResponse<WorkflowExecution>> =>
     api.post(`/n8n/pei/${peiId}/generated`).then(res => res.data),
 
   // Notificar aprobación de PEI
-  notifyPEIApproved: (peiId: number): Promise<ApiResponse<WorkflowExecution>> =>
+  notifyPEIApproved: (peiId: string): Promise<ApiResponse<WorkflowExecution>> =>
     api.post(`/n8n/pei/${peiId}/approved`).then(res => res.data),
+
+  // Obtener historial de ejecuciones
+  getExecutions: (): Promise<ApiResponse<WorkflowExecution[]>> =>
+    api.get('/n8n/executions').then(res => res.data),
+
+  // Obtener detalles de ejecución específica
+  getExecution: (executionId: string): Promise<ApiResponse<WorkflowExecution>> =>
+    api.get(`/n8n/execution/${executionId}`).then(res => res.data),
 
   // Obtener estadísticas de workflows
   getStats: (): Promise<ApiResponse<any>> =>
@@ -180,4 +207,110 @@ export const authService = {
     localStorage.removeItem('authToken');
     return Promise.resolve();
   },
+};
+
+// AWS Services Completo
+export const awsService = {
+  // ==========================================
+  // AWS TEXTRACT - OCR
+  // ==========================================
+  
+  // Extraer texto de documento usando Textract
+  extractText: (file: File): Promise<ApiResponse<{ 
+    text: string; 
+    confidence: number;
+    pages: number;
+  }>> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/aws/textract/extract', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }).then(res => res.data);
+  },
+
+  // ==========================================
+  // AWS S3 - STORAGE
+  // ==========================================
+  
+  // Subir archivo a S3
+  uploadToS3: (file: File, folder?: string): Promise<ApiResponse<{ 
+    url: string; 
+    key: string;
+    bucket: string;
+    size: number;
+  }>> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    if (folder) formData.append('folder', folder);
+    return api.post('/aws/s3/upload', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }).then(res => res.data);
+  },
+
+  // Obtener URL firmada para descarga
+  getDownloadUrl: (key: string): Promise<ApiResponse<{ url: string }>> =>
+    api.get(`/aws/s3/download/${key}`).then(res => res.data),
+
+  // ==========================================
+  // AWS COMPREHEND - NLP
+  // ==========================================
+  
+  // Analizar sentimiento del texto
+  analyzeSentiment: (text: string): Promise<ApiResponse<any>> =>
+    api.post('/aws/comprehend/analyze-sentiment', { text }).then(res => res.data),
+
+  // Detectar entidades en el texto
+  detectEntities: (text: string): Promise<ApiResponse<any>> =>
+    api.post('/aws/comprehend/detect-entities', { text }).then(res => res.data),
+
+  // Detectar información médica protegida (PHI)
+  detectPHI: (text: string): Promise<ApiResponse<any>> =>
+    api.post('/aws/comprehend/detect-phi', { text }).then(res => res.data),
+
+  // ==========================================
+  // AWS POLLY - TTS (Backup)
+  // ==========================================
+  
+  // Sintetizar voz con Polly
+  synthesizeSpeech: (text: string, voiceId?: string): Promise<Blob> =>
+    api.post('/aws/polly/synthesize', 
+      { text, voiceId: voiceId || 'Lucia' },
+      { responseType: 'blob' }
+    ).then(res => res.data),
+
+  // Listar voces disponibles en Polly
+  listPollyVoices: (): Promise<ApiResponse<any[]>> =>
+    api.get('/aws/polly/voices').then(res => res.data),
+
+  // ==========================================
+  // AWS PIPELINE COMPLETO
+  // ==========================================
+  
+  // Procesar informe completo (OCR + NLP + Storage + Análisis)
+  processReport: (file: File): Promise<ApiResponse<any>> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post('/aws/process-report', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    }).then(res => res.data);
+  },
+
+  // Health check de servicios AWS
+  checkHealth: (): Promise<ApiResponse<any>> =>
+    api.get('/aws/health').then(res => res.data),
+};
+
+// Vonage Service (SMS/Video)
+export const vonageService = {
+  // Enviar SMS
+  sendSMS: (to: string, text: string): Promise<ApiResponse<any>> =>
+    api.post('/vonage/sms/send', { to, text }).then(res => res.data),
+
+  // Obtener estado de SMS
+  getSMSStatus: (messageId: string): Promise<ApiResponse<any>> =>
+    api.get(`/vonage/sms/status/${messageId}`).then(res => res.data),
+
+  // Obtener balance de la cuenta
+  getBalance: (): Promise<ApiResponse<any>> =>
+    api.get('/vonage/balance').then(res => res.data),
 };

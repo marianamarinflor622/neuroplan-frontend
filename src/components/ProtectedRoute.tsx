@@ -4,14 +4,19 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { Brain, ArrowRight } from 'lucide-react';
+import { Brain, ArrowRight, AlertTriangle } from 'lucide-react';
+import { UserRole } from '@/types/api';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
+  allowedRoles?: UserRole[];
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
+  children, 
+  allowedRoles 
+}) => {
+  const { isAuthenticated, isLoading, user } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -56,6 +61,42 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
                     Crea tu Perfil NeuroAcadémico
                   </Link>
                 </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Verificar roles si se especifican
+  if (allowedRoles && user?.rol && !allowedRoles.includes(user.rol)) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="max-w-md mx-auto">
+          <Card className="shadow-elegant">
+            <CardContent className="pt-6 text-center space-y-6">
+              <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto">
+                <AlertTriangle className="h-8 w-8 text-destructive" />
+              </div>
+              
+              <div className="space-y-2">
+                <h2 className="text-2xl font-bold">Acceso denegado</h2>
+                <p className="text-muted-foreground">
+                  No tienes permisos para acceder a esta sección
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Tu rol: <span className="font-medium">{user?.rol}</span>
+                </p>
+              </div>
+              
+              <div className="space-y-3">
+                <Link to="/dashboard">
+                  <Button className="w-full">
+                    Volver al dashboard
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>
