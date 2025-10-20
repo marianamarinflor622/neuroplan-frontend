@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { authService } from '../services/neuroplanApi';
 import { UserRole } from '../types/api';
+import { handleApiError, logError } from '@/lib/api-error-handler';
+import { useToast } from '@/hooks/use-toast';
 
 interface User {
   id: string;
@@ -42,6 +44,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
   // Verificar si hay una sesión guardada al cargar la aplicación
   useEffect(() => {
@@ -71,66 +74,45 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
     
     try {
-      // Intentar login con el backend (si está disponible)
-      try {
-        const response = await authService.login(email, password);
-        
-        // Si el backend responde correctamente
-        if (response.data.token && response.data.user) {
-          localStorage.setItem('authToken', response.data.token);
-          setUser(response.data.user);
-          localStorage.setItem('neuroplan_user', JSON.stringify(response.data.user));
-          return true;
-        }
-      } catch (backendError) {
-        console.warn('Backend auth not available, using mock login:', backendError);
+      const response = await authService.login(email, password);
+      
+      // Validar respuesta del backend
+      if (!response.data.token || !response.data.user) {
+        toast({
+          title: 'Error de autenticación',
+          description: 'Respuesta inválida del servidor',
+          variant: 'destructive',
+        });
+        return false;
       }
       
-      // Fallback: Simulamos login para demo (cuando backend no esté disponible)
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Guardar token y datos de usuario
+      localStorage.setItem('authToken', response.data.token);
+      setUser(response.data.user);
+      localStorage.setItem('neuroplan_user', JSON.stringify(response.data.user));
       
-      // Determinar rol basado en email
-      let userRole: UserRole = UserRole.ADMIN;
-      if (email.includes('estudiante') || email.includes('familia')) {
-        userRole = UserRole.ESTUDIANTE_FAMILIA;
-      } else if (email.includes('orientador')) {
-        userRole = UserRole.ORIENTADOR;
-      } else if (email.includes('profesor')) {
-        userRole = UserRole.PROFESOR;
-      } else if (email.includes('director')) {
-        userRole = UserRole.DIRECTOR_CENTRO;
-      }
-
-      // Simular datos de usuario para demo
-      const userData: User = {
-        id: '1',
-        email,
-        nombre: 'Usuario',
-        apellidos: 'Demo',
-        rol: userRole,
-        centroId: 'centro-demo-1',
-        centro: {
-          id: 'centro-demo-1',
-          nombre: 'Centro Educativo Demo',
-          codigo: 'CED001'
-        },
-        activo: true,
-        perfilNeuroAcademico: {
-          nivelActual: 'Bachillerato',
-          objetivosAcademicos: 'Acceder a la universidad',
-          fortalezas: ['Memoria visual', 'Pensamiento lógico'],
-          areasApoyo: ['Atención', 'Organización'],
-          preferenciasSensoriales: ['Visual', 'Interactivo']
-        }
-      };
-      
-      setUser(userData);
-      localStorage.setItem('neuroplan_user', JSON.stringify(userData));
-      localStorage.setItem('authToken', 'demo_token_' + Date.now());
+      toast({
+        title: '¡Bienvenido!',
+        description: `Has iniciado sesión como ${response.data.user.nombre}`,
+      });
       
       return true;
     } catch (error) {
-      console.error('Login error:', error);
+      const apiError = handleApiError(error, '/auth/login');
+      
+      logError(apiError, { email });
+      
+      toast({
+        title: 'Error al iniciar sesión',
+        description: apiError.getUserFriendlyMessage(),
+        variant: 'destructive',
+      });
+      
+      // Limpiar cualquier dato previo
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('neuroplan_user');
+      setUser(null);
+      
       return false;
     } finally {
       setIsLoading(false);

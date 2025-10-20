@@ -1,0 +1,23 @@
+# Ignora archivos generados y dependencias
+node_modules
+dist
+build
+.next
+out
+coverage
+
+# Ignora archivos de configuración de entorno
+.env
+.env.local
+.env.production
+
+# Ignora archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos específicos
+*.log
+*.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
