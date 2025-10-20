@@ -16,9 +16,7 @@ import {
   EyeOff, 
   ArrowRight,
   GraduationCap,
-  Sparkles,
-  AlertCircle,
-  CheckCircle2
+  Sparkles
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 

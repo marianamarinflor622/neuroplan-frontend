@@ -1,9 +1,8 @@
 import React from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import {  useLocation, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
 import { Brain, ArrowRight, AlertTriangle } from 'lucide-react';
 import { UserRole } from '@/types/api';
 
