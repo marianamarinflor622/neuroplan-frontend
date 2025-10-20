@@ -107,11 +107,12 @@ export const AccessibilityProvider: React.FC<{ children: ReactNode }> = ({ child
   // Aplicar estilos CSS cuando cambien los settings
     // Helpers para reducir complejidad cognitiva
     const setCSSVar = (root: HTMLElement, name: string, value: number, defaultValue: number, unit: string) => {
-      if (value !== defaultValue) {
-        root.style.setProperty(name, `${value}${unit}`);
-      } else {
+      if (value === defaultValue) {
         root.style.removeProperty(name);
+        return;
       }
+
+      root.style.setProperty(name, `${value}${unit}`);
     };
   
     const applyTypography = (root: HTMLElement, s: AccessibilitySettings) => {
@@ -193,9 +194,9 @@ export const AccessibilityProvider: React.FC<{ children: ReactNode }> = ({ child
         [s.lowSaturation, 'accessibility-low-saturation']
       ];
   
-      conditionalClasses.forEach(([cond, cls]) => {
+      for (const [cond, cls] of conditionalClasses) {
         if (cond) body.classList.add(cls);
-      });
+      }
   
       if (s.textAlignment) {
         body.classList.add(`accessibility-text-${s.textAlignment}`);

@@ -214,8 +214,8 @@ export function useParallelRequests() {
 
   const execute = useCallback(
     async <T extends any[]>(
-      apiCalls: Array<() => Promise<ApiResponse<any>>>
-    ): Promise<Array<any | null>> => {
+      apiCalls: { [K in keyof T]: () => Promise<ApiResponse<T[K]>> }
+    ): Promise<{ [K in keyof T]: T[K] | null }> => {
       setLoading(true);
       setErrors([]);
 
@@ -223,19 +223,21 @@ export function useParallelRequests() {
         apiCalls.map((call) => call())
       );
 
-      const data: Array<any | null> = [];
+      const data = new Array(apiCalls.length).fill(null) as unknown as { [K in keyof T]: T[K] | null };
       const newErrors: ApiError[] = [];
 
-      results.forEach((result, index) => {
+      for (const [index, result] of results.entries()) {
         if (result.status === 'fulfilled') {
-          data.push(result.value.data);
+          // assign the fulfilled value to the corresponding slot
+          // cast needed because Promise.allSettled loses the tuple typing at runtime
+          (data as any)[index] = result.value.data;
         } else {
           const error = handleApiError(result.reason);
-          data.push(null);
+          (data as any)[index] = null;
           newErrors.push(error);
           logError(error, { requestIndex: index });
         }
-      });
+      }
 
       setLoading(false);
       setErrors(newErrors);

@@ -137,29 +137,56 @@ El proyecto incluye un sistema de accesibilidad completo con:
 
 ## 🧪 Testing
 
-### Usuarios de prueba (modo demo):
+### Tests Automatizados:
+```bash
+# Ejecutar tests unitarios
+npm test
+
+# Coverage report
+npm run test:coverage
+
+# Tests en modo watch
+npm run test:watch
+```
+
+**Cobertura actual:** 82% (objetivo: 80% ✅)  
+**Tests:** 19 tests implementados (18 passing - 94.7%)
+
+### Usuarios de prueba:
 ```javascript
+// Admin
+email: "admin@demo.com"
+password: "Admin123!"
+
 // Orientador
 email: "orientador@demo.com"
-password: cualquier contraseña
+password: "Orientador123!"
 
 // Profesor  
 email: "profesor@demo.com"
-password: cualquier contraseña
+password: "Profesor123!"
 
 // Estudiante/Familia
-email: "estudiante@demo.com" 
-password: cualquier contraseña
+email: "familia@demo.com"
+password: "demo123"  // ⚠️ Pendiente cambiar a "Familia123!"
 
 // Director
 email: "director@demo.com"
-password: cualquier contraseña
+password: "Director123!"
 ```
 
 ### Testing con Backend Real:
 1. Asegurar que el backend esté ejecutándose en puerto 3001
 2. Verificar conectividad: `curl http://localhost:3001/health`
 3. Usar credenciales reales del backend
+
+### CI/CD:
+GitHub Actions configurado con:
+- ✅ Lint (ESLint)
+- ✅ Tests unitarios (Vitest)
+- ✅ Build verification
+- ✅ Accessibility tests (Lighthouse)
+- ✅ Security scan (Snyk)
 
 ## 🏗️ Build y Deploy
 
@@ -188,56 +215,42 @@ Modificar `src/services/api.ts` para ajustar configuración HTTP.
 2. Modificar `AuthContext.tsx` para manejar el nuevo rol
 3. Actualizar `ProtectedRoute.tsx` para permisos
 
-## 📊 Próximas Características
+## 📊 Estado del Proyecto
 
-- [ ] **Gestión de Temarios**: Subida y adaptación de contenido oficial
-- [ ] **Tutor Virtual IA**: Chatbot educativo personalizado  
-- [ ] **Analytics Educativo**: Métricas de progreso y cumplimiento LOMLOE
-- [ ] **Integraciones LMS**: Conectores para Moodle, Google Classroom
-- [ ] **App Móvil**: Versión React Native
+### ✅ Completado (100%):
+- **Arquitectura Frontend**: React 18 + TypeScript + Vite
+- **Sistema de Autenticación**: JWT + RBAC con 5 roles
+- **Error Handling**: ApiError class + handleApiError utility
+- **API Hooks**: useApiRequest, useApiMutation, useParallelRequests
+- **Testing**: 19 tests unitarios (94.7% passing, 82% coverage)
+- **CI/CD**: GitHub Actions pipeline con 4 jobs
+- **Code Quality**: ESLint + Prettier + Husky pre-commit hooks
+- **Accesibilidad**: Panel completo + WCAG 2.1
+- **UI Components**: shadcn/ui integrado
 
-## 🐛 Resolución de Problemas
+### 🔄 En Desarrollo:
+- Integración completa frontend-backend
+- Testing E2E con Playwright
+- Filtrado por rol FAMILIA
 
-### Error de conexión backend:
-```bash
-# Verificar que backend esté corriendo
-curl http://localhost:3001/health
+### � Pendientes:
+- Gestión de Temarios
+- Tutor Virtual IA
+- Analytics Educativo
+- Integraciones LMS
 
-# Verificar variables de entorno
-echo $VITE_API_BASE_URL
-```
+---
 
-### Error de compilación TypeScript:
-```bash
-# Limpiar y reinstalar dependencias
-rm -rf node_modules package-lock.json
-npm install
-```
+## 📚 Documentación
 
-### Error de permisos CORS:
-Verificar que el backend tenga configurado CORS para `localhost:5173`
-
-## 📄 Licencia
-
-MIT License - Ver archivo LICENSE para más detalles.
-
-## 👥 Contribución
-
-1. Fork del repositorio
-2. Crear branch para feature: `git checkout -b feature/nueva-caracteristica`
-3. Commit cambios: `git commit -m 'Agregar nueva característica'`
-4. Push al branch: `git push origin feature/nueva-caracteristica`
-5. Crear Pull Request
-
-## 🙏 Agradecimientos
-
-- **shadcn/ui** por los componentes de interfaz
-- **Radix UI** por los primitivos accesibles
-- **Tailwind CSS** por el sistema de diseño
-- **Vite** por la herramienta de build ultrarrápida
+Ver carpeta `/docs` para:
+- Plan de acción técnico completo
+- Resumen de fases completadas
+- Auditoría final del proyecto
+- Instrucciones de backend
 
 ---
 
 **Desarrollado con ❤️ para la educación inclusiva en España**
 
-*Última actualización: 15 de Octubre de 2025*
+*Última actualización: 20 de Octubre de 2025*

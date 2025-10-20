@@ -69,6 +69,7 @@ describe('AuthContext', () => {
             rol: 'ADMIN',
           },
         },
+        status: 200,
       };
 
       vi.mocked(neuroplanApi.authService.login).mockResolvedValue(mockResponse);
@@ -137,7 +138,6 @@ describe('AuthContext', () => {
 
   describe('Logout', () => {
     it('debe hacer logout y limpiar datos', async () => {
-      // Primero hacer login
       const mockResponse = {
         data: {
           token: 'mock-jwt-token',
@@ -148,9 +148,10 @@ describe('AuthContext', () => {
             apellidos: 'Demo',
           },
         },
+        status: 200,
       };
 
-      vi.mocked(neuroplanApi.authService.login).mockResolvedValue(mockResponse);
+      vi.mocked(neuroplanApi.authService.login).mockResolvedValue(mockResponse as any);
 
       const { result } = renderHook(() => useAuth(), {
         wrapper: AuthProvider,

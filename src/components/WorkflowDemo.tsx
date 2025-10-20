@@ -92,8 +92,8 @@ export default function WorkflowDemo() {
   };
 
   const handleNotifyPEIGenerated = async () => {
-    const peiId = parseInt(peiIdGenerated);
-    if (isNaN(peiId) || peiId <= 0) {
+    const peiId = Number.parseInt(peiIdGenerated, 10);
+    if (Number.isNaN(peiId) || peiId <= 0) {
       toast.error('Por favor ingresa un ID de PEI válido');
       return;
     }
@@ -102,7 +102,7 @@ export default function WorkflowDemo() {
     setGeneratedResult(null);
 
     try {
-      const response = await workflowService.notifyPEIGenerated(peiId);
+      const response = await workflowService.notifyPEIGenerated(String(peiId));
 
       if (response.status === 200 || response.status === 201) {
         setGeneratedResult(response.data);
@@ -119,8 +119,8 @@ export default function WorkflowDemo() {
   };
 
   const handleNotifyPEIApproved = async () => {
-    const peiId = parseInt(peiIdApproved);
-    if (isNaN(peiId) || peiId <= 0) {
+    const peiId = Number.parseInt(peiIdApproved, 10);
+    if (Number.isNaN(peiId) || peiId <= 0) {
       toast.error('Por favor ingresa un ID de PEI válido');
       return;
     }
@@ -129,7 +129,7 @@ export default function WorkflowDemo() {
     setApprovedResult(null);
 
     try {
-      const response = await workflowService.notifyPEIApproved(peiId);
+      const response = await workflowService.notifyPEIApproved(String(peiId));
 
       if (response.status === 200 || response.status === 201) {
         setApprovedResult(response.data);
