@@ -109,7 +109,11 @@ const GeneratePEI = () => {
 
       setPeiGenerated(true);
     } catch (err) {
-      setError("Error al procesar el archivo. Por favor, inténtalo de nuevo.");
+      if (err instanceof Error) {
+        setError(`Error al procesar el archivo: ${err.message}`);
+      } else {
+        setError("Error al procesar el archivo. Por favor, inténtalo de nuevo.");
+      }
     } finally {
       setIsProcessing(false);
     }
@@ -149,7 +153,59 @@ const GeneratePEI = () => {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          {!peiGenerated ? (
+          {peiGenerated ? (
+            /* Resultado del PEI generado */
+            <Card className="p-8 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
+              <div className="text-center space-y-6">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
+                    <CheckCircle className="h-8 w-8 text-white" />
+                  </div>
+                  <h2 className="text-3xl font-bold text-green-600">¡PEI Generado Exitosamente!</h2>
+                </div>
+                
+                <p className="text-lg text-muted-foreground">
+                  Tu Pasaporte Educativo Inteligente ha sido creado y está listo para descargar.
+                </p>
+                
+                <div className="grid md:grid-cols-2 gap-4 max-w-md mx-auto">
+                  <Button
+                    onClick={handleDownloadPEI}
+                    className="bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary-dark text-white py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <Download className="h-5 w-5 mr-2" />
+                    Descargar PEI
+                  </Button>
+                  
+                  <Button
+                    onClick={handlePreviewPEI}
+                    variant="outline"
+                    className="py-3 rounded-xl border-2 hover:bg-gray-50 transition-all duration-300"
+                  >
+                    <Eye className="h-5 w-5 mr-2" />
+                    Vista Previa
+                  </Button>
+                </div>
+                
+                <div className="pt-6">
+                  <Button
+                    onClick={() => {
+                      setPeiGenerated(false);
+                      setSelectedFile(null);
+                      setSelectedGrade("");
+                      setAdditionalNotes("");
+                      setProgress(0);
+                      setError("");
+                    }}
+                    variant="outline"
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    Generar Nuevo PEI
+                  </Button>
+                </div>
+              </div>
+            </Card>
+          ) : (
             <Card className="p-8 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
               <div className="space-y-8">
                 {/* Sección de subida de archivo */}
@@ -274,58 +330,6 @@ const GeneratePEI = () => {
                     <Progress value={progress} className="h-2" />
                   </div>
                 )}
-              </div>
-            </Card>
-          ) : (
-            /* Resultado del PEI generado */
-            <Card className="p-8 bg-white/80 backdrop-blur-sm border-0 shadow-xl">
-              <div className="text-center space-y-6">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <div className="p-3 rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg">
-                    <CheckCircle className="h-8 w-8 text-white" />
-                  </div>
-                  <h2 className="text-3xl font-bold text-green-600">¡PEI Generado Exitosamente!</h2>
-                </div>
-                
-                <p className="text-lg text-muted-foreground">
-                  Tu Pasaporte Educativo Inteligente ha sido creado y está listo para descargar.
-                </p>
-                
-                <div className="grid md:grid-cols-2 gap-4 max-w-md mx-auto">
-                  <Button
-                    onClick={handleDownloadPEI}
-                    className="bg-gradient-to-r from-primary to-secondary hover:from-primary-dark hover:to-secondary-dark text-white py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    <Download className="h-5 w-5 mr-2" />
-                    Descargar PEI
-                  </Button>
-                  
-                  <Button
-                    onClick={handlePreviewPEI}
-                    variant="outline"
-                    className="py-3 rounded-xl border-2 hover:bg-gray-50 transition-all duration-300"
-                  >
-                    <Eye className="h-5 w-5 mr-2" />
-                    Vista Previa
-                  </Button>
-                </div>
-                
-                <div className="pt-6">
-                  <Button
-                    onClick={() => {
-                      setPeiGenerated(false);
-                      setSelectedFile(null);
-                      setSelectedGrade("");
-                      setAdditionalNotes("");
-                      setProgress(0);
-                      setError("");
-                    }}
-                    variant="outline"
-                    className="text-muted-foreground hover:text-foreground"
-                  >
-                    Generar Nuevo PEI
-                  </Button>
-                </div>
               </div>
             </Card>
           )}

@@ -138,38 +138,12 @@ const PEIResult = () => {
     ]
   });
 
-  const handleDownload = (documentName: string) => {
+  const handleDownload = () => {
     // Simular descarga
-    console.log(`Descargando: ${documentName}`);
+    console.log("Descargando: PEI Completo");
   };
 
-  const handleShare = () => {
-    // Simular compartir
-    console.log("Compartiendo PEI");
-  };
 
-  const handlePrint = () => {
-    window.print();
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "expired":
-        return "bg-red-100 text-red-800 border-red-200";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
-  };
 
   return (
     <div className="min-h-screen bg-white">

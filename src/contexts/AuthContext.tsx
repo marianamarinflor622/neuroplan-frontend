@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Verificar si hay un token válido en localStorage
         const savedUser = localStorage.getItem('neuroplan_user');
         const authToken = localStorage.getItem('authToken');
-        
+
         if (savedUser && authToken) {
           const userData = JSON.parse(savedUser);
           setUser(userData);
@@ -72,12 +72,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
-    
+
     try {
       const response = await authService.login(email, password);
-      
+
+      console.log('🔍 Respuesta completa del backend:', response);
+
+      // Forzar tipos para soportar ambas respuestas
+      const token =
+        (response as any).data?.accessToken ||
+        response.data?.token ||
+        (response as any).accessToken;
+      const userData =
+        (response as any).data?.usuario ||
+        response.data?.user ||
+        (response as any).usuario ||
+        response.data;
       // Validar respuesta del backend
-      if (!response.data.token || !response.data.user) {
+      if (!token || !userData) {
+        console.error('❌ Token o usuario no encontrado en respuesta:', response);
         toast({
           title: 'Error de autenticación',
           description: 'Respuesta inválida del servidor',
@@ -85,34 +98,39 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
         return false;
       }
-      
+
+      console.log('✅ Token recibido:', token.substring(0, 20) + '...');
+      console.log('✅ Usuario:', userData);
+
       // Guardar token y datos de usuario
-      localStorage.setItem('authToken', response.data.token);
-      setUser(response.data.user);
-      localStorage.setItem('neuroplan_user', JSON.stringify(response.data.user));
-      
+      localStorage.setItem('authToken', token);
+      setUser(userData);
+      localStorage.setItem('neuroplan_user', JSON.stringify(userData));
+
       toast({
         title: '¡Bienvenido!',
-        description: `Has iniciado sesión como ${response.data.user.nombre}`,
+        description: `Has iniciado sesión como ${userData.nombre}`,
       });
-      
+
       return true;
     } catch (error) {
+      console.error('❌ Error completo en login:', error);
+
       const apiError = handleApiError(error, '/auth/login');
-      
+
       logError(apiError, { email });
-      
+
       toast({
         title: 'Error al iniciar sesión',
         description: apiError.getUserFriendlyMessage(),
         variant: 'destructive',
       });
-      
+
       // Limpiar cualquier dato previo
       localStorage.removeItem('authToken');
       localStorage.removeItem('neuroplan_user');
       setUser(null);
-      
+
       return false;
     } finally {
       setIsLoading(false);
@@ -133,20 +151,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const value: AuthContextType = useMemo(() => ({
-    user,
-    isAuthenticated: !!user,
-    isLoading,
-    login,
-    logout,
-    updateUser,
-  }), [user, isLoading]);
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  const value: AuthContextType = useMemo(
+    () => ({
+      user,
+      isAuthenticated: !!user,
+      isLoading,
+      login,
+      logout,
+      updateUser,
+    }),
+    [user, isLoading]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = (): AuthContextType => {

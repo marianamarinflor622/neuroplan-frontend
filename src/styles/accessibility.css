@@ -170,7 +170,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
 /* Silenciar Sonidos */
 .accessibility-mute-sounds video,
 .accessibility-mute-sounds audio {
-  muted: true;
+
 }
 
 /* Brillo Alto - usa backdrop-filter para no sobrescribir otros filtros */
