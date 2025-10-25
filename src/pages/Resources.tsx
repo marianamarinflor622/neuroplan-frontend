@@ -40,7 +40,6 @@ const Resources = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("todos");
 
-  console.log("Resources component - isLoading:", isLoading, "isAuthenticated:", isAuthenticated, "user:", user);
 
   // Versión simplificada para debuggear
   return (

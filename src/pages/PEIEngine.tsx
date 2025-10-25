@@ -32,11 +32,11 @@ import {
 import { studentsService, peisService, healthService } from "../services/neuroplanApi";
 import type { Student, PEI, CreateStudentDTO, GeneratePEIDTO } from "../types/api";
 import { toast } from "sonner";
-import { useAuth } from "../contexts/AuthContext";
+
 import { BedrockDemo } from "@/components/BedrockDemo";
 
 const PEIEngine = () => {
-  const { user } = useAuth(); // Hook para mantener contexto de autenticación
+
   const [activeTab, setActiveTab] = useState("overview");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisProgress, setAnalysisProgress] = useState(0);
@@ -44,15 +44,14 @@ const PEIEngine = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [peis, setPeis] = useState<PEI[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [studentName, setStudentName] = useState("");
-  const [studentLastName, setStudentLastName] = useState("");
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
   const [studentBirthDate, setStudentBirthDate] = useState("");
   const [studentGrade, setStudentGrade] = useState("");
   const [isCreatingStudent, setIsCreatingStudent] = useState(false);
   const [isGeneratingPEI, setIsGeneratingPEI] = useState(false);
   
   // Evitar warning de variable no usada
-  console.debug('User context:', user);
 
   // Verificar conexión con el backend al cargar la página
   useEffect(() => {
@@ -67,8 +66,12 @@ const PEIEngine = () => {
       setBackendConnected(true);
       toast.success("Conectado al backend NeuroPlan");
     } catch (error) {
-      console.warn("Backend no disponible, usando modo demo:", error);
       setBackendConnected(false);
+      if (error instanceof Error) {
+        console.error("Backend connection error:", error.message);
+      } else {
+        console.error("Backend connection error:", error);
+      }
       toast.info("Ejecutando en modo demo");
     }
   };
@@ -96,7 +99,8 @@ const PEIEngine = () => {
   };
 
   const createStudentAndUploadReport = async () => {
-    if (!selectedFile || !studentName.trim() || !studentLastName.trim() || !studentBirthDate || !studentGrade.trim()) {
+
+    if (!selectedFile || !firstName.trim() || !lastName.trim() || !studentBirthDate || !studentGrade.trim()) {
       toast.error("Por favor completa todos los campos requeridos");
       return;
     }
@@ -105,8 +109,8 @@ const PEIEngine = () => {
     try {
       // Crear estudiante con campos actualizados
       const studentData: CreateStudentDTO = {
-        name: studentName.trim(),
-        lastName: studentLastName.trim(),
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
         birthDate: studentBirthDate, // Formato YYYY-MM-DD
         grade: studentGrade.trim(),
       };
@@ -116,19 +120,19 @@ const PEIEngine = () => {
 
       // Subir reporte médico
       const reportResponse = await studentsService.uploadReport(newStudent.id, selectedFile);
-      
+
       toast.success("Estudiante creado y reporte subido exitosamente");
-      
+
       // Recargar datos
       await loadStudents();
-      
+
       // Limpiar formulario
       setSelectedFile(null);
-      setStudentName("");
-      setStudentLastName("");
+      setFirstName("");
+      setLastName("");
       setStudentBirthDate("");
       setStudentGrade("");
-      
+
       return { student: newStudent, report: reportResponse.data };
     } catch (error) {
       console.error("Error creating student:", error);
@@ -372,28 +376,28 @@ const PEIEngine = () => {
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label htmlFor="studentName" className="block text-sm font-medium mb-2">
+                      <label htmlFor="firstName" className="block text-sm font-medium mb-2">
                         Nombre <span className="text-red-500">*</span>
                       </label>
                       <input
-                        id="studentName"
+                        id="firstName"
                         type="text"
-                        value={studentName}
-                        onChange={(e) => setStudentName(e.target.value)}
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
                         placeholder="Ej: María"
                         className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary/20"
                         required
                       />
                     </div>
                     <div>
-                      <label htmlFor="studentLastName" className="block text-sm font-medium mb-2">
+                      <label htmlFor="lastName" className="block text-sm font-medium mb-2">
                         Apellido <span className="text-red-500">*</span>
                       </label>
                       <input
-                        id="studentLastName"
+                        id="lastName"
                         type="text"
-                        value={studentLastName}
-                        onChange={(e) => setStudentLastName(e.target.value)}
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
                         placeholder="Ej: González"
                         className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-primary/20"
                         required
@@ -490,7 +494,7 @@ const PEIEngine = () => {
                   </ol>
                   <Button 
                     onClick={handleCreateAndGenerate}
-                    disabled={isCreatingStudent || isGeneratingPEI || !studentName.trim() || !studentLastName.trim() || !studentBirthDate || !studentGrade || !selectedFile}
+                    disabled={isCreatingStudent || isGeneratingPEI || !firstName.trim() || !lastName.trim() || !studentBirthDate || !studentGrade || !selectedFile}
                     className="w-full"
                   >
                     {isCreatingStudent || isGeneratingPEI ? (
@@ -516,7 +520,7 @@ const PEIEngine = () => {
                     {students.slice(0, 6).map((student) => (
                       <Card key={student.id} className="hover:shadow-md transition-shadow">
                         <CardContent className="p-4">
-                          <h5 className="font-medium">{student.name} {student.lastName}</h5>
+                          <h5 className="font-medium">{student.firstName} {student.lastName}</h5>
                           <p className="text-sm text-muted-foreground">{student.grade}</p>
                           <p className="text-xs text-muted-foreground mt-1">
                             Nacimiento: {new Date(student.birthDate).toLocaleDateString()}

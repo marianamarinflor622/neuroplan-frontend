@@ -37,10 +37,12 @@ const ChartContainer = React.forwardRef<
   }
 >(({ id, className, children, config, ...props }, ref) => {
   const uniqueId = React.useId();
-  const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`;
+  const chartId = `chart-${id || uniqueId.replaceAll(":", "")}`;
+
+  const contextValue = React.useMemo(() => ({ config }), [config]);
 
   return (
-    <ChartContext.Provider value={{ config }}>
+    <ChartContext.Provider value={contextValue}>
       <div
         data-chart={chartId}
         ref={ref}
@@ -128,10 +130,7 @@ const ChartTooltipContent = React.forwardRef<
       const [item] = payload;
       const key = `${labelKey || item.dataKey || item.name || "value"}`;
       const itemConfig = getPayloadConfigFromPayload(config, item, key);
-      const value =
-        !labelKey && typeof label === "string"
-          ? config[label as keyof typeof config]?.label || label
-          : itemConfig?.label;
+      const value = itemConfig?.label || label;
 
       if (labelFormatter) {
         return <div className={cn("font-medium", labelClassName)}>{labelFormatter(value, payload)}</div>;
@@ -158,7 +157,7 @@ const ChartTooltipContent = React.forwardRef<
           className,
         )}
       >
-        {!nestLabel ? tooltipLabel : null}
+        {nestLabel ? null : tooltipLabel}
         <div className="grid gap-1.5">
           {payload.map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || "value"}`;
@@ -259,10 +258,10 @@ const ChartLegendContent = React.forwardRef<
               <itemConfig.icon />
             ) : (
               <div
-                className="h-2 w-2 shrink-0 rounded-[2px]"
+                className="h-2 w-2 shrink-0 rounded-[2px] [background-color:var(--indicator-color)]"
                 style={{
-                  backgroundColor: item.color,
-                }}
+                  '--indicator-color': item.color,
+                } as React.CSSProperties & { '--indicator-color': string }}
               />
             )}
             {itemConfig?.label}
@@ -297,7 +296,7 @@ function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key:
     configLabelKey = payloadPayload[key as keyof typeof payloadPayload] as string;
   }
 
-  return configLabelKey in config ? config[configLabelKey] : config[key as keyof typeof config];
+  return config[configLabelKey] || config[key];
 }
 
 export { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, ChartStyle };

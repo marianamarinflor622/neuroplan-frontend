@@ -39,16 +39,16 @@ export enum WorkflowStatus {
 export interface AuthUser {
   id: string;
   email: string;
-  nombre: string;
-  apellidos: string;
+  firstName: string;
+  lastName: string;
   rol: UserRole;
   centroId?: string;
   centro?: {
     id: string;
-    nombre: string;
-    codigo: string;
+    name: string;
+    code: string;
   };
-  activo: boolean;
+  active: boolean;
   lastLogin?: string;
   createdAt: string;
   updatedAt: string;
@@ -56,8 +56,8 @@ export interface AuthUser {
 
 export interface Student {
   id: string; // Backend usa string (UUID)
-  name: string;
-  lastName: string; // Backend usa lastName, no separado
+  // name: string; // Eliminado, ahora se usa firstName y lastName
+  // lastName: string; // Eliminado duplicado, ahora se usa firstName y lastName
   birthDate: string; // Backend usa birthDate
   grade: string; // Backend usa grade, no gradeLevel
   parentName?: string;
@@ -68,6 +68,8 @@ export interface Student {
   updatedAt: string;
   reports?: Report[];
   peis?: PEI[];
+  firstName: string;
+  lastName: string;
 }
 
 export interface Report {
@@ -96,6 +98,13 @@ export interface PEI {
   report?: Report;
   audioFiles?: AudioFile[];
   resourceLinks?: ResourceLink[];
+  summary: string;
+  diagnosis: string;
+  objectives: any[];
+  adaptations: any[];
+  strategies: any[];
+  evaluation: any;
+  timeline: any;
 }
 
 export interface AudioFile {
@@ -156,8 +165,8 @@ export interface LoginDTO {
 export interface RegisterDTO {
   email: string;
   password: string;
-  nombre: string;
-  apellidos: string;
+  firstName: string;
+  lastName: string;
   rol: UserRole;
   centroId?: string;
 }
@@ -168,7 +177,7 @@ export interface AuthResponse {
 }
 
 export interface CreateStudentDTO {
-  name: string;
+  firstName: string; // Alineado con el backend y frontend
   lastName: string; // Backend requiere lastName
   birthDate: string; // Backend requiere birthDate (formato: YYYY-MM-DD)
   grade: string; // Backend requiere grade

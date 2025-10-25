@@ -15,7 +15,6 @@ export const useVoice = () => {
 
   const speak = useCallback((text: string) => {
     if (!isSupported) {
-      console.warn('Speech synthesis is not supported in this browser');
       return;
     }
 

@@ -25,9 +25,6 @@ import {
   BookOpen,
   TrendingUp,
   FileText,
-  Settings,
-  Eye,
-  EyeOff,
   FileCheck
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -37,19 +34,18 @@ const Profile = () => {
   const { user, updateUser } = useAuth();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
-  const [showSensitiveData, setShowSensitiveData] = useState(false);
   
   const [editData, setEditData] = useState({
-    nombre: user?.nombre || "",
-    apellidos: user?.apellidos || "",
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
     email: user?.email || "",
-    telefono: "",
-    fechaNacimiento: "",
-    nivelActual: user?.perfilNeuroAcademico?.nivelActual || "",
-    objetivosAcademicos: user?.perfilNeuroAcademico?.objetivosAcademicos || "",
-    fortalezas: user?.perfilNeuroAcademico?.fortalezas || [],
-    areasApoyo: user?.perfilNeuroAcademico?.areasApoyo || [],
-    preferenciasSensoriales: user?.perfilNeuroAcademico?.preferenciasSensoriales || [],
+    phone: "",
+    birthDate: "",
+    currentLevel: user?.neuroAcademicProfile?.currentLevel || "",
+    academicGoals: user?.neuroAcademicProfile?.academicGoals || "",
+    strengths: user?.neuroAcademicProfile?.strengths || [],
+    supportAreas: user?.neuroAcademicProfile?.supportAreas || [],
+    sensoryPreferences: user?.neuroAcademicProfile?.sensoryPreferences || [],
   });
 
   const nivelesAcademicos = [
@@ -104,17 +100,17 @@ const Profile = () => {
   };
 
   const handleSave = () => {
-    // Actualizar el usuario con los nuevos datos
+    // Update the user with the new data (en inglés)
     updateUser({
-      nombre: editData.nombre,
-      apellidos: editData.apellidos,
+      firstName: editData.firstName,
+      lastName: editData.lastName,
       email: editData.email,
-      perfilNeuroAcademico: {
-        nivelActual: editData.nivelActual,
-        objetivosAcademicos: editData.objetivosAcademicos,
-        fortalezas: editData.fortalezas,
-        areasApoyo: editData.areasApoyo,
-        preferenciasSensoriales: editData.preferenciasSensoriales,
+      neuroAcademicProfile: {
+        currentLevel: editData.currentLevel,
+        academicGoals: editData.academicGoals,
+        strengths: editData.strengths,
+        supportAreas: editData.supportAreas,
+        sensoryPreferences: editData.sensoryPreferences,
       }
     });
 
@@ -127,23 +123,23 @@ const Profile = () => {
 
   const handleCancel = () => {
     setEditData({
-      nombre: user?.nombre || "",
-      apellidos: user?.apellidos || "",
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
       email: user?.email || "",
-      telefono: "",
-      fechaNacimiento: "",
-      nivelActual: user?.perfilNeuroAcademico?.nivelActual || "",
-      objetivosAcademicos: user?.perfilNeuroAcademico?.objetivosAcademicos || "",
-      fortalezas: user?.perfilNeuroAcademico?.fortalezas || [],
-      areasApoyo: user?.perfilNeuroAcademico?.areasApoyo || [],
-      preferenciasSensoriales: user?.perfilNeuroAcademico?.preferenciasSensoriales || [],
+      phone: "",
+      birthDate: "",
+      currentLevel: user?.neuroAcademicProfile?.currentLevel || "",
+      academicGoals: user?.neuroAcademicProfile?.academicGoals || "",
+      strengths: user?.neuroAcademicProfile?.strengths || [],
+      supportAreas: user?.neuroAcademicProfile?.supportAreas || [],
+      sensoryPreferences: user?.neuroAcademicProfile?.sensoryPreferences || [],
     });
     setIsEditing(false);
   };
 
-  const handleArrayToggle = (field: string, value: string) => {
+  const handleArrayToggle = (field: keyof typeof editData, value: string) => {
     setEditData(prev => {
-      const currentArray = prev[field as keyof typeof prev] as string[];
+      const currentArray = prev[field] as string[];
       const newArray = currentArray.includes(value)
         ? currentArray.filter(item => item !== value)
         : [...currentArray, value];
@@ -239,34 +235,34 @@ const Profile = () => {
                     Información Personal
                   </CardTitle>
                   <CardDescription>
-                    Datos básicos de tu perfil de usuario
+                    Basic data of your user profile
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="nombre">Nombre</Label>
+                      <Label htmlFor="firstName">Nombre</Label>
                       {isEditing ? (
                         <Input
-                          id="nombre"
-                          value={editData.nombre}
-                          onChange={(e) => setEditData(prev => ({ ...prev, nombre: e.target.value }))}
+                          id="firstName"
+                          value={editData.firstName}
+                          onChange={(e) => setEditData(prev => ({ ...prev, firstName: e.target.value }))}
                         />
                       ) : (
-                        <div className="p-3 bg-muted/50 rounded-md">{user.nombre}</div>
+                        <div className="p-3 bg-muted/50 rounded-md">{user.firstName}</div>
                       )}
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="apellidos">Apellidos</Label>
+                      <Label htmlFor="lastName">Apellidos</Label>
                       {isEditing ? (
                         <Input
-                          id="apellidos"
-                          value={editData.apellidos}
-                          onChange={(e) => setEditData(prev => ({ ...prev, apellidos: e.target.value }))}
+                          id="lastName"
+                          value={editData.lastName}
+                          onChange={(e) => setEditData(prev => ({ ...prev, lastName: e.target.value }))}
                         />
                       ) : (
-                        <div className="p-3 bg-muted/50 rounded-md">{user.apellidos}</div>
+                        <div className="p-3 bg-muted/50 rounded-md">{user.lastName}</div>
                       )}
                     </div>
                   </div>
@@ -310,8 +306,8 @@ const Profile = () => {
                             <input
                               type="checkbox"
                               id={fortaleza}
-                              checked={editData.fortalezas.includes(fortaleza)}
-                              onChange={() => handleArrayToggle("fortalezas", fortaleza)}
+                              checked={editData.strengths.includes(fortaleza)}
+                              onChange={() => handleArrayToggle("strengths", fortaleza)}
                               className="rounded"
                             />
                             <Label htmlFor={fortaleza} className="text-sm">{fortaleza}</Label>
@@ -320,7 +316,7 @@ const Profile = () => {
                       </div>
                     ) : (
                       <div className="flex flex-wrap gap-2">
-                        {user.perfilNeuroAcademico?.fortalezas.map((fortaleza) => (
+                        {user.neuroAcademicProfile?.strengths.map((fortaleza) => (
                           <Badge key={fortaleza} variant="secondary" className="flex items-center gap-1">
                             <CheckCircle2 className="h-3 w-3" />
                             {fortaleza}
@@ -350,8 +346,8 @@ const Profile = () => {
                             <input
                               type="checkbox"
                               id={area}
-                              checked={editData.areasApoyo.includes(area)}
-                              onChange={() => handleArrayToggle("areasApoyo", area)}
+                              checked={editData.supportAreas.includes(area)}
+                              onChange={() => handleArrayToggle("supportAreas", area)}
                               className="rounded"
                             />
                             <Label htmlFor={area} className="text-sm">{area}</Label>
@@ -360,7 +356,7 @@ const Profile = () => {
                       </div>
                     ) : (
                       <div className="flex flex-wrap gap-2">
-                        {user.perfilNeuroAcademico?.areasApoyo.map((area) => (
+                        {user.neuroAcademicProfile?.supportAreas.map((area) => (
                           <Badge key={area} variant="outline" className="flex items-center gap-1">
                             <Target className="h-3 w-3" />
                             {area}
@@ -390,8 +386,8 @@ const Profile = () => {
                             <input
                               type="checkbox"
                               id={preferencia}
-                              checked={editData.preferenciasSensoriales.includes(preferencia)}
-                              onChange={() => handleArrayToggle("preferenciasSensoriales", preferencia)}
+                              checked={editData.sensoryPreferences.includes(preferencia)}
+                              onChange={() => handleArrayToggle("sensoryPreferences", preferencia)}
                               className="rounded"
                             />
                             <Label htmlFor={preferencia} className="text-sm">{preferencia}</Label>
@@ -400,7 +396,7 @@ const Profile = () => {
                       </div>
                     ) : (
                       <div className="flex flex-wrap gap-2">
-                        {user.perfilNeuroAcademico?.preferenciasSensoriales.map((preferencia) => (
+                        {user.neuroAcademicProfile?.sensoryPreferences.map((preferencia) => (
                           <Badge key={preferencia} variant="default" className="flex items-center gap-1">
                             <BookOpen className="h-3 w-3" />
                             {preferencia}
@@ -429,7 +425,7 @@ const Profile = () => {
                   <div className="space-y-2">
                     <Label htmlFor="nivelActual">Nivel académico actual</Label>
                     {isEditing ? (
-                      <Select value={editData.nivelActual} onValueChange={(value) => setEditData(prev => ({ ...prev, nivelActual: value }))}>
+                      <Select value={editData.currentLevel} onValueChange={(value) => setEditData(prev => ({ ...prev, currentLevel: value }))}>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecciona tu nivel actual" />
                         </SelectTrigger>
@@ -444,7 +440,7 @@ const Profile = () => {
                     ) : (
                       <div className="p-3 bg-muted/50 rounded-md flex items-center gap-2">
                         <GraduationCap className="h-4 w-4 text-primary" />
-                        {user.perfilNeuroAcademico?.nivelActual}
+                        {user.neuroAcademicProfile?.currentLevel}
                       </div>
                     )}
                   </div>
@@ -453,15 +449,15 @@ const Profile = () => {
                     <Label htmlFor="objetivosAcademicos">Objetivos académicos</Label>
                     {isEditing ? (
                       <Textarea
-                        id="objetivosAcademicos"
-                        value={editData.objetivosAcademicos}
-                        onChange={(e) => setEditData(prev => ({ ...prev, objetivosAcademicos: e.target.value }))}
+                        id="academicGoals"
+                        value={editData.academicGoals}
+                        onChange={(e) => setEditData(prev => ({ ...prev, academicGoals: e.target.value }))}
                         placeholder="Describe tus objetivos académicos y profesionales..."
                         rows={4}
                       />
                     ) : (
                       <div className="p-3 bg-muted/50 rounded-md">
-                        {user.perfilNeuroAcademico?.objetivosAcademicos}
+                        {user.neuroAcademicProfile?.academicGoals}
                       </div>
                     )}
                   </div>

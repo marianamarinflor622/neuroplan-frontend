@@ -7,22 +7,22 @@ import { useToast } from '@/hooks/use-toast';
 interface User {
   id: string;
   email: string;
-  nombre: string;
-  apellidos: string;
-  rol?: UserRole;
-  centroId?: string;
-  centro?: {
+  firstName: string;
+  lastName: string;
+  role?: UserRole;
+  centerId?: string;
+  center?: {
     id: string;
-    nombre: string;
-    codigo: string;
+    name: string;
+    code: string;
   };
-  activo?: boolean;
-  perfilNeuroAcademico?: {
-    nivelActual: string;
-    objetivosAcademicos: string;
-    fortalezas: string[];
-    areasApoyo: string[];
-    preferenciasSensoriales: string[];
+  active?: boolean;
+  neuroAcademicProfile?: {
+    currentLevel: string;
+    academicGoals: string;
+    strengths: string[];
+    supportAreas: string[];
+    sensoryPreferences: string[];
   };
 }
 
@@ -74,42 +74,31 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(true);
 
     try {
-      const response = await authService.login(email, password);
+  const response = await authService.login(email, password);
 
-      console.log('🔍 Respuesta completa del backend:', response);
+  // Get token and user from response
+  const token = response.data?.token;
+  // Type assertion to allow compatibility with both 'user' and 'usuario'
+  const userData = (response.data?.user ?? (response.data as any)?.usuario); // Keep compatibility with old backend
+  // Validar respuesta del backend
+  if (!token || !userData) {
+    toast({
+      title: 'Error de autenticación',
+      description: 'Respuesta inválida del servidor',
+      variant: 'destructive',
+    });
+    return false;
+  }
 
-      // Forzar tipos para soportar ambas respuestas
-      const token =
-        (response as any).data?.accessToken ||
-        response.data?.token ||
-        (response as any).accessToken;
-      const userData =
-        (response as any).data?.usuario ||
-        response.data?.user ||
-        (response as any).usuario ||
-        response.data;
-      // Validar respuesta del backend
-      if (!token || !userData) {
-        console.error('❌ Token o usuario no encontrado en respuesta:', response);
-        toast({
-          title: 'Error de autenticación',
-          description: 'Respuesta inválida del servidor',
-          variant: 'destructive',
-        });
-        return false;
-      }
 
-      console.log('✅ Token recibido:', token.substring(0, 20) + '...');
-      console.log('✅ Usuario:', userData);
-
-      // Guardar token y datos de usuario
+  // Save token and user data
       localStorage.setItem('authToken', token);
       setUser(userData);
       localStorage.setItem('neuroplan_user', JSON.stringify(userData));
 
       toast({
         title: '¡Bienvenido!',
-        description: `Has iniciado sesión como ${userData.nombre}`,
+        description: `Has iniciado sesión como ${userData.firstName}`,
       });
 
       return true;

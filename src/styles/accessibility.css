@@ -170,7 +170,8 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
 /* Silenciar Sonidos */
 .accessibility-mute-sounds video,
 .accessibility-mute-sounds audio {
-
+  /* Mute sounds for accessibility */
+  opacity: 0.1;
 }
 
 /* Brillo Alto - usa backdrop-filter para no sobrescribir otros filtros */
@@ -183,6 +184,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: brightness(130%);
   backdrop-filter: brightness(130%);
 }
 
@@ -196,6 +198,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: brightness(70%);
   backdrop-filter: brightness(70%);
 }
 
@@ -209,6 +212,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: contrast(150%);
   backdrop-filter: contrast(150%);
 }
 
@@ -238,6 +242,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: invert(1);
   backdrop-filter: invert(1);
 }
 
@@ -263,6 +268,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: grayscale(100%);
   backdrop-filter: grayscale(100%);
 }
 
@@ -276,6 +282,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: saturate(200%);
   backdrop-filter: saturate(200%);
 }
 
@@ -289,6 +296,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: saturate(50%);
   backdrop-filter: saturate(50%);
 }
 
@@ -304,6 +312,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: contrast(1.2) sepia(0.1) hue-rotate(10deg);
   backdrop-filter: contrast(1.2) sepia(0.1) hue-rotate(10deg);
 }
 
@@ -317,6 +326,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: contrast(1.1) sepia(0.05) hue-rotate(5deg);
   backdrop-filter: contrast(1.1) sepia(0.05) hue-rotate(5deg);
 }
 
@@ -330,6 +340,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: contrast(1.2) sepia(0.15) hue-rotate(-10deg);
   backdrop-filter: contrast(1.2) sepia(0.15) hue-rotate(-10deg);
 }
 
@@ -343,6 +354,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: contrast(1.15) hue-rotate(180deg) saturate(0.8);
   backdrop-filter: contrast(1.15) hue-rotate(180deg) saturate(0.8);
 }
 
@@ -356,6 +368,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: contrast(1.1) hue-rotate(90deg) saturate(0.9);
   backdrop-filter: contrast(1.1) hue-rotate(90deg) saturate(0.9);
 }
 
@@ -369,6 +382,7 @@ body:not([class*="accessibility-colorblind-"]):not(.accessibility-monochrome):no
   bottom: 0;
   pointer-events: none;
   z-index: 1;
+  -webkit-backdrop-filter: grayscale(100%) contrast(1.2);
   backdrop-filter: grayscale(100%) contrast(1.2);
 }
 

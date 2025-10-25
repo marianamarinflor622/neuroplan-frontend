@@ -140,7 +140,6 @@ const PEIResult = () => {
 
   const handleDownload = () => {
     // Simular descarga
-    console.log("Descargando: PEI Completo");
   };
 
 

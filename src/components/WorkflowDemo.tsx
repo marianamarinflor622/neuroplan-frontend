@@ -150,9 +150,7 @@ export default function WorkflowDemo() {
     setStats(null);
 
     try {
-      console.log('Cargando estadísticas...');
       const response = await workflowService.getStats();
-      console.log('Respuesta recibida:', response);
 
       if (response.status === 200) {
         setStats(response.data);

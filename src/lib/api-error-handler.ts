@@ -41,7 +41,7 @@ export class ApiError extends Error {
   }
 
   /**
-   * Obtiene un mensaje amigable para el usuario
+  * Gets a user-friendly error message
    */
   getUserFriendlyMessage(): string {
     if (this.statusCode === 0) {
@@ -146,10 +146,10 @@ export const logError = (error: ApiError, context?: Record<string, any>) => {
     });
   }
 
-  // TODO: Integrar con servicio de logging en producción
-  // if (process.env.NODE_ENV === 'production') {
-  //   Sentry.captureException(error, { extra: context });
-  // }
+    // Integración con Sentry para logging en producción
+    if (process.env.NODE_ENV === 'production' && globalThis.window !== undefined && (globalThis.window as any).Sentry) {
+      (globalThis.window as any).Sentry.captureException(error, { extra: context });
+    }
 };
 
 /**

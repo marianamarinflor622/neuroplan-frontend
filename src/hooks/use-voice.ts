@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 /**
  * Custom hook for text-to-speech functionality
@@ -9,13 +9,12 @@ export const useVoice = () => {
   const [isSupported, setIsSupported] = useState(false);
 
   // Check if speech synthesis is supported
-  useState(() => {
+  useEffect(() => {
     setIsSupported('speechSynthesis' in window);
-  });
+  }, []);
 
   const speak = useCallback((text: string) => {
     if (!isSupported) {
-      console.warn('Speech synthesis is not supported in this browser');
       return;
     }
 

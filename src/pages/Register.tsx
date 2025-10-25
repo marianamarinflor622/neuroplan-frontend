@@ -30,8 +30,8 @@ import { useToast } from "@/hooks/use-toast";
 
 interface FormData {
   // Información personal
-  nombre: string;
-  apellidos: string;
+  firstName: string;
+  lastName: string;
   email: string;
   telefono: string;
   fechaNacimiento: string;
@@ -65,8 +65,8 @@ const Register = () => {
   const { toast } = useToast();
   
   const [formData, setFormData] = useState<FormData>({
-    nombre: "",
-    apellidos: "",
+    firstName: "",
+    lastName: "",
     email: "",
     telefono: "",
     fechaNacimiento: "",
@@ -189,6 +189,16 @@ const Register = () => {
     }
   };
 
+  const getStepIconClasses = (isActive: boolean, isCompleted: boolean) => {
+    if (isActive) {
+      return 'bg-primary border-primary text-primary-foreground';
+    }
+    if (isCompleted) {
+      return 'bg-success border-success text-success-foreground';
+    }
+    return 'bg-background border-muted-foreground/30 text-muted-foreground';
+  };
+
   const handleSubmit = async () => {
     // Validaciones finales
     if (formData.password !== formData.confirmPassword) {
@@ -210,7 +220,6 @@ const Register = () => {
     }
 
     // Aquí iría la lógica para enviar los datos al backend
-    console.log("Datos del formulario:", formData);
     
     toast({
       title: "¡Perfil NeuroAcadémico creado!",
@@ -227,20 +236,20 @@ const Register = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="nombre">Nombre *</Label>
+                <Label htmlFor="firstName">Nombre *</Label>
                 <Input
-                  id="nombre"
-                  value={formData.nombre}
-                  onChange={(e) => handleInputChange("nombre", e.target.value)}
+                  id="firstName"
+                  value={formData.firstName}
+                  onChange={(e) => handleInputChange("firstName", e.target.value)}
                   placeholder="Tu nombre"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="apellidos">Apellidos *</Label>
+                <Label htmlFor="lastName">Apellidos *</Label>
                 <Input
-                  id="apellidos"
-                  value={formData.apellidos}
-                  onChange={(e) => handleInputChange("apellidos", e.target.value)}
+                  id="lastName"
+                  value={formData.lastName}
+                  onChange={(e) => handleInputChange("lastName", e.target.value)}
                   placeholder="Tus apellidos"
                 />
               </div>
@@ -513,7 +522,7 @@ const Register = () => {
                 <div className="space-y-1">
                   <Label htmlFor="terminos" className="text-sm">
                     Acepto los{" "}
-                    <a href="#" className="text-primary hover:underline">
+                    <a href="/terms" className="text-primary hover:underline">
                       términos y condiciones
                     </a>{" "}
                     del servicio *
@@ -530,7 +539,7 @@ const Register = () => {
                 <div className="space-y-1">
                   <Label htmlFor="privacidad" className="text-sm">
                     Acepto la{" "}
-                    <a href="#" className="text-primary hover:underline">
+                    <a href="/privacy" className="text-primary hover:underline">
                       política de privacidad
                     </a>{" "}
                     y el procesamiento de mis datos *
@@ -595,12 +604,7 @@ const Register = () => {
                   <div key={step.id} className="flex items-center">
                     <div className={`
                       flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all
-                      ${isActive 
-                        ? 'bg-primary border-primary text-primary-foreground' 
-                        : isCompleted 
-                          ? 'bg-success border-success text-success-foreground' 
-                          : 'bg-background border-muted-foreground/30 text-muted-foreground'
-                      }
+                      ${getStepIconClasses(isActive, isCompleted)}
                     `}>
                       {isCompleted ? (
                         <CheckCircle2 className="h-5 w-5" />

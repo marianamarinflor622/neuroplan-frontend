@@ -14,16 +14,22 @@ import type {
   TriggerWorkflowDTO,
   ApiResponse,
 } from '../types/api';
+import { 
+  mapStudentsResponse, 
+  mapUserResponse, 
+  mapFrontendStudent,
+  mapFrontendUser 
+} from '@/lib/data-mappers';
 
 // Students & Reports Service
 export const studentsService = {
   // Crear estudiante
   create: (data: CreateStudentDTO): Promise<ApiResponse<Student>> =>
-    api.post('/uploads/students', data).then(res => res.data),
+    api.post('/uploads/students', mapFrontendStudent(data)).then(res => res.data),
 
   // Listar estudiantes
   getAll: (): Promise<ApiResponse<Student[]>> =>
-    api.get('/uploads/students').then(res => res.data),
+    api.get('/uploads/students').then(res => mapStudentsResponse(res.data)),
 
   // Obtener estudiante por ID
   getById: (id: string): Promise<ApiResponse<Student>> =>
@@ -192,19 +198,45 @@ export const bedrockService = {
     api.post('/aws/bedrock/generate-pei', data).then(res => res.data),
 };
 
-// Auth Service (si se implementa más adelante)
+// Auth Service - Integración real con backend
 export const authService = {
-  // Login placeholder (para futura implementación)
+  // Login real con backend
   login: (email: string, password: string): Promise<ApiResponse<{ token: string; user: any }>> =>
-    api.post('/auth/login', { email, password }).then(res => res.data),
+    api.post('/auth/login', { email, password }).then(res => {
+      // Mapear respuesta del backend al formato esperado
+      const mappedResponse = {
+        data: {
+          token: res.data.token || res.data.accessToken,
+          user: res.data.user || res.data.usuario // Keep compatibility with old backend
+        },
+        message: res.data.message,
+        status: res.status
+      };
+      return mappedResponse;
+    }),
 
-  // Register placeholder
+  // Register real con backend
   register: (userData: any): Promise<ApiResponse<{ token: string; user: any }>> =>
-    api.post('/auth/register', userData).then(res => res.data),
+    api.post('/auth/register', mapFrontendUser(userData)).then(res => {
+      const mappedResponse = {
+        data: {
+          token: res.data.token || res.data.accessToken,
+          user: res.data.user || res.data.usuario // Keep compatibility with old backend
+        },
+        message: res.data.message,
+        status: res.status
+      };
+      return mappedResponse;
+    }),
+
+  // Get authenticated user profile
+  getProfile: (): Promise<ApiResponse<any>> =>
+    api.get('/auth/me').then(res => mapUserResponse(res.data)),
 
   // Logout
   logout: (): Promise<void> => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('neuroplan_user');
     return Promise.resolve();
   },
 };
