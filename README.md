@@ -14,13 +14,13 @@
 
 ## 🌍 English Version
 
-**NeuroEducar** es una plataforma educativa innovadora diseñada para crear itinerarios de aprendizaje personalizados para estudiantes neurodivergentes, alineados con el sistema educativo español (LOMLOE). **URL**: https://lovable.dev/projects/cc1b299f-c782-41e1-8304-f4545fd772ec
+**NeuroPlanai** es una plataforma educativa innovadora diseñada para crear itinerarios de aprendizaje personalizados para estudiantes neurodivergentes, alineados con el sistema educativo español.
 
 ## 📖 Project Description
 
 
 
-**NeuroEducar** is an innovative educational platform designed to create personalized learning itineraries for neurodivergent students, aligned with the Spanish educational system (LOMLOE).
+**NeuroPlanai** is an innovative educational platform designed to create personalized learning itineraries for neurodivergent students, aligned with the Spanish educational system (LOMLOE).
 
 La plataforma utiliza inteligencia artificial para analizar reportes médicos y generar automáticamente Planes Educativos Individualizados (PEI) personalizados, adaptados a las necesidades específicas de cada estudiante.## How can I edit this code?
 
@@ -984,8 +984,8 @@ Este proyecto está bajo licencia MIT.
 ---
 
 ## 👥 Equipo
-
-Desarrollado con ❤️ por el equipo NeuroEducar
+Mariana marin Flor 
+Eva Sisalli Guzman 
 
 ---
 
